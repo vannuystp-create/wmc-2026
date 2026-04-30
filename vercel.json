@@ -1,0 +1,27 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options",  "value": "nosniff" },
+        { "key": "X-Frame-Options",          "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy",          "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy",       "value": "microphone=(self)" },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://lkikgzlxvjzavqtkkenf.supabase.co https://*.supabase.co https://api.anthropic.com https://api.resend.com; img-src 'self' data: https://img.youtube.com https://images.unsplash.com https://*.supabase.co; frame-src 'self' https://www.youtube-nocookie.com;"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/:path*",      "destination": "/api/:path*" },
+    { "source": "/",                "destination": "/index.html" },
+    { "source": "/onboarding",      "destination": "/index.html" },
+    { "source": "/dashboard",       "destination": "/dashboard.html" },
+    { "source": "/sergeant",        "destination": "/dashboard.html" },
+    { "source": "/stuurpagina",     "destination": "/stuurpagina.html" }
+  ]
+}

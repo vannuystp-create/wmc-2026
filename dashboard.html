@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>WMC 2026 — Sergeant Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#05070b; --s1:#0d1520; --s2:#111d2c; --s3:#162030;
+      --border:rgba(255,102,0,.15); --border2:rgba(255,102,0,.28);
+      --text:#e8e4df; --muted:#8a9aaa; --dim:#4a5a6a;
+      --sage:#FF6600; --sage-b:rgba(255,102,0,.12); --sage-bright:#FF8533;
+      --gold:#FF6600; --gold-b:rgba(255,102,0,.12); --wmc-orange:#FF6600; --wmc-magenta:#E5007D;
+      --red:#c4604a; --red-b:rgba(196,96,74,.13);
+      --amber:#e8a554; --amber-b:rgba(232,165,84,.13);
+      --green:#4aaa68; --green-b:rgba(74,170,104,.13);
+      --fh:'Montserrat','Syne',sans-serif; --fb:'Montserrat','DM Sans',sans-serif; --fm:'DM Mono',monospace;
+      --r:10px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:radial-gradient(ellipse at top,rgba(110,170,140,.1),transparent 55%),var(--bg);
+      color:var(--text);font-family:var(--fb);min-height:100vh;}
+
+    .wrap{max-width:1200px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1;}
+
+    /* ── HEADER ── */
+    .hdr{position:sticky;top:0;z-index:50;padding:14px 0 0;
+      background:linear-gradient(to bottom,rgba(5,7,11,.97),rgba(5,7,11,.88),transparent);
+      backdrop-filter:blur(20px);}
+    .hdr-row{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;}
+    .hdr-label{font-size:.68rem;color:var(--sage);font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;}
+    .hdr-title{font-family:var(--fh);font-size:1.25rem;font-weight:700;margin-top:3px;}
+    .hdr-right{text-align:right;font-size:.7rem;color:var(--muted);line-height:1.7;}
+    .hdr-right b{color:var(--sage);font-weight:500;}
+
+    /* ── NAV ── */
+    .nav{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:24px;}
+    .nav-btn{padding:9px 18px;border:none;background:none;color:var(--muted);cursor:pointer;
+      font-family:var(--fb);font-size:.82rem;font-weight:500;
+      border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s;}
+    .nav-btn:hover{color:var(--text);}
+    .nav-btn.active{color:var(--sage-bright);border-bottom-color:var(--sage);}
+
+    /* ── VIEWS ── */
+    .view{display:none;} .view.active{display:block;}
+
+    /* ── CARDS ── */
+    .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;}
+    .card-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .card-title{font-family:var(--fh);font-size:.9rem;font-weight:700;}
+    .card-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+    .card-body{padding:16px 18px;}
+
+    /* ── GRID ── */
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    @media(max-width:800px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr;}}
+    @media(max-width:500px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+
+    /* ── LOCATION CARD ── */
+    .loc-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:border-color .18s;}
+    .loc-card:hover{border-color:var(--border2);}
+    .loc-card.selected{border-color:var(--sage);background:var(--sage-b);}
+    .loc-icon{font-size:1.6rem;margin-bottom:8px;}
+    .loc-name{font-family:var(--fh);font-weight:700;font-size:.95rem;margin-bottom:4px;}
+    .loc-count{font-size:.78rem;color:var(--muted);margin-bottom:10px;}
+    .loc-bar{display:flex;gap:3px;height:6px;border-radius:3px;overflow:hidden;}
+    .loc-g{background:var(--green);border-radius:3px;}
+    .loc-o{background:var(--amber);border-radius:3px;}
+    .loc-r{background:var(--red);border-radius:3px;}
+    .loc-n{background:var(--s3);border-radius:3px;flex:1;}
+
+    /* ── STATUS DOTS ── */
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .dot-g{background:var(--green);}
+    .dot-o{background:var(--amber);}
+    .dot-r{background:var(--red);}
+    .dot-n{background:var(--dim);}
+
+    /* ── PERSON ROW ── */
+    .person-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .person-row:last-child{border-bottom:none;}
+    .person-name{flex:1;font-size:.88rem;font-weight:500;}
+    .person-role{font-size:.68rem;font-family:var(--fm);color:var(--dim);margin-top:1px;}
+
+    /* ── BADGE PIPS ── */
+    .badge-pips{display:flex;gap:3px;align-items:center;}
+    .pip{width:14px;height:14px;border-radius:50%;font-size:.55rem;display:flex;align-items:center;justify-content:center;border:1.5px solid transparent;flex-shrink:0;}
+    .pip-done{border-color:transparent;}
+    .pip-prog{border-color:var(--sage);background:transparent;}
+    .pip-lock{background:var(--s3);border-color:var(--s3);opacity:.4;}
+
+    /* ── ALERT ROW ── */
+    .alert-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;margin-bottom:6px;}
+    .alert-orange{background:var(--amber-b);border:1px solid rgba(232,165,84,.3);}
+    .alert-red{background:var(--red-b);border:1px solid rgba(196,96,74,.35);}
+    .alert-text{flex:1;font-size:.84rem;line-height:1.4;}
+    .alert-time{font-family:var(--fm);font-size:.65rem;color:var(--dim);white-space:nowrap;}
+
+    /* ── KPI ── */
+    .kpi-num{font-family:var(--fh);font-size:2rem;font-weight:800;line-height:1;}
+    .kpi-label{font-size:.7rem;color:var(--muted);margin-top:4px;font-family:var(--fm);letter-spacing:.05em;}
+
+    /* ── BUTTONS ── */
+    .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.8rem;font-weight:600;font-family:var(--fb);transition:all .15s;}
+    .btn-sage{background:var(--sage-b);color:var(--sage);border:1px solid rgba(110,170,140,.3);}
+    .btn-sage:hover{background:rgba(255,102,0,.2);}
+    .btn-ghost{background:none;color:var(--muted);border:1px solid var(--border);}
+    .btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+
+    /* ── PILL ── */
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:.68rem;font-family:var(--fm);font-weight:600;white-space:nowrap;}
+    .pill-g{background:var(--green-b);color:var(--green);border:1px solid rgba(74,170,104,.3);}
+    .pill-o{background:var(--amber-b);color:var(--amber);border:1px solid rgba(232,165,84,.3);}
+    .pill-r{background:var(--red-b);color:var(--red);border:1px solid rgba(196,96,74,.35);}
+    .pill-n{background:var(--s2);color:var(--dim);border:1px solid var(--border);}
+
+    /* ── DB STATUS ── */
+    .db-bar{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:.75rem;}
+    .db-dot{width:7px;height:7px;border-radius:50%;}
+    .db-ok{background:var(--green);}
+    .db-warn{background:var(--amber);}
+    .db-off{background:var(--dim);}
+
+    /* ── SPIN ── */
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--border2);border-top-color:var(--sage);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+    /* ── WEEKEND ZAAGTAND ── */
+    .weekend-row{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+    .wknd{flex-shrink:0;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;}
+    .wknd.active{border-color:var(--sage);background:var(--sage-b);}
+    .wknd.past{opacity:.5;}
+    .wknd-label{font-family:var(--fm);font-size:.62rem;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;}
+    .wknd-name{font-size:.82rem;font-weight:600;margin-bottom:2px;}
+    .wknd-date{font-size:.7rem;color:var(--muted);}
+
+    .lbl{font-family:var(--fm);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);}
+    .mono{font-family:var(--fm);}
+    .muted{color:var(--muted);}
+    .row-sb{display:flex;justify-content:space-between;align-items:center;}
+    .mt8{margin-top:8px;}
+    .mb14{margin-bottom:14px;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── HEADER ── -->
+  <div class="hdr" id="hdr">
+    <div class="wrap" style="padding-left:0;padding-right:0;padding-bottom:0;">
+      <div class="hdr-row">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <svg width="44" height="44" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg" aria-label="WMC Kerkrade logo">
+            <path d="M18 8 C14 22, 8 38, 6 58 C4 72, 10 82, 20 86 C28 89, 36 87, 44 84 C38 80, 30 72, 26 60 C22 46, 20 30, 22 14 Z" fill="#00AEEF" opacity="0.92"/>
+            <path d="M30 5 C26 20, 20 38, 18 58 C16 72, 22 82, 34 87 C42 90, 52 88, 60 84 C52 78, 44 70, 40 58 C36 44, 34 26, 36 10 Z" fill="#E5007D" opacity="0.92"/>
+            <path d="M50 4 C46 20, 40 38, 38 58 C36 72, 44 82, 56 87 C66 90, 76 88, 82 82 C74 76, 64 68, 60 56 C56 42, 56 24, 60 8 Z" fill="#FFE000" opacity="0.92"/>
+            <path d="M68 6 C64 22, 58 40, 56 60 C54 74, 62 84, 74 87 C82 89, 90 84, 94 76 C90 66, 84 56, 82 44 C80 30, 80 16, 82 6 Z" fill="#1A1A1A" opacity="0.85"/>
+          </svg>
+          <div>
+            <div class="hdr-label">🎺 WMC 2026 · Digital Sanctuary</div>
+            <div class="hdr-title">Sergeant Dashboard</div>
+          </div>
+        </div>
+        <div class="hdr-right">
+          <b id="hdr-location">Alle locaties</b><br>
+          <span id="hdr-date"></span><br>
+          <span id="hdr-source" style="color:var(--amber)">● localStorage</span>
+        </div>
+      </div>
+      <div class="nav" id="nav">
+        <button class="nav-btn active" onclick="showTab('overzicht')">📍 Teamoverzicht</button>
+        <button class="nav-btn" onclick="showTab('badges')">🏅 Badges & Modules</button>
+        <button class="nav-btn" onclick="showTab('alerts')">⚠️ Alerts</button>
+        <button class="nav-btn" onclick="showTab('weekend')">📅 Weekendplanning</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="db-status" class="db-bar" style="margin-top:8px;">
+    <span class="db-dot db-off" id="db-dot"></span>
+    <span id="db-msg">Supabase niet actief — data uit localStorage van dit apparaat</span>
+    <button class="btn btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.7rem;" onclick="trySupabase()">↻ Verbinden</button>
+  </div>
+
+  <!-- ══════════════════════════
+       VIEW 1 — TEAMOVERZICHT
+  ══════════════════════════ -->
+  <div class="view active" id="view-overzicht">
+
+    <!-- Locatie-kaarten -->
+    <div class="grid-4 mb14" id="loc-grid"></div>
+
+    <!-- Geselecteerde locatie — personen -->
+    <div class="card" id="team-detail" style="display:none;">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title" id="detail-title">Team</div>
+          <div class="card-sub" id="detail-sub"></div>
+        </div>
+        <button class="btn btn-ghost" onclick="clearLocation()">✕ Alles tonen</button>
+      </div>
+      <div class="card-body" id="detail-body"></div>
+    </div>
+
+    <!-- Alle-locaties samenvatting -->
+    <div class="card" id="all-summary">
+      <div class="card-hdr">
+        <div class="card-title">Vandaag — alle locaties</div>
+        <button class="btn btn-ghost" style="font-size:.72rem;" onclick="loadAll()">↻ Vernieuwen</button>
+      </div>
+      <div class="card-body" id="all-summary-body">
+        <div><span class="spin"></span>Laden…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════
+       VIEW 2 — BADGES
+  ══════════════════════════ -->
+  <div class="view" id="view-badges">
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">Module- & Badge-voortgang</div>
+          <div class="card-sub">Per vrijwilliger — locatie-gefilterd. Geen reflectieteksten zichtbaar.</div>
+        </div>
+        <select id="badge-loc-filter" class="btn btn-ghost" onchange="renderBadges()"
+          style="font-size:.75rem;padding:5px 10px;">
+          <option value="ALL">Alle locaties</option>
+          <option value="RODAHAL">🎼 Rodahal</option>
+          <option value="STADION">🏟️ Stadion</option>
+          <option value="TEMPEL">🏛️ Tempel</option>
+          <option value="ARENA">🎪 Arena</option>
+        </select>
+      </div>
+      <div class="card-body" id="badge-body"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       VIEW 3 — ALERTS
+  ══════════════════════════ -->
+  <div class="view" id="view-alerts">
+    <div style="margin-bottom:14px;padding:12px 16px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);font-size:.82rem;color:var(--muted);line-height:1.6;">
+      <b style="color:var(--sage);">Zero Inference Mandaat</b> — Alerts tonen alleen het <i>signaal</i>: locatie en status.
+      Geen naam, geen reflectietekst, geen tijdstip. Jij beslist of en hoe je handelt.
+      Disclaimer: dit is een reflectie-voorstel — beslissingen blijven menselijk.
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Rode & Oranje signalen — vandaag</div>
+        <div class="card-sub" id="alert-count">0 actieve signalen</div>
+      </div>
+      <div class="card-body" id="alert-body">
+        <div class="muted" style="font-size:.85rem;">Geen actieve alerts.</div>
+      </div>
+    </div>
+    <div class="card mt8">
+      <div class="card-hdr"><div class="card-title">Check-in statistieken — afgelopen 7 dagen</div></div>
+      <div class="card-body" id="stats-body"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════
+       VIEW 4 — WEEKENDPLANNING
+  ══════════════════════════ -->
+  <div class="view" id="view-weekend">
+    <div class="weekend-row" id="weekend-row"></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Zaagtand-profiel WMC 2026</div></div>
+        <div class="card-body">
+          <div id="zaagtand-chart" style="display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:16px;"></div>
+          <div style="font-size:.82rem;color:var(--muted);line-height:1.7;">
+            Vier piekweekenden met bewuste herstelvensters. De formule <span class="mono" style="color:var(--sage);">S+H≥T</span> is
+            actief over alle vier weekenden. Weekend 4 vereist het hoogste draagkrachtniveau.
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">S+H≥T — Continuïteitsformule</div></div>
+        <div class="card-body">
+          <div style="font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:14px;">
+            Als de formule negatief wordt, zijn er drie interventies in volgorde van minst ingrijpend:
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);">
+              <div class="lbl" style="margin-bottom:3px;">1 — Taak aanpassen</div>
+              <div style="font-size:.82rem;color:var(--muted);">Minder intensief of kortere shift.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);">
+              <div class="lbl" style="margin-bottom:3px;">2 — Herstel verlengen</div>
+              <div style="font-size:.82rem;color:var(--muted);">Later beginnen of eerder stoppen.</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid rgba(232,165,84,.2);">
+              <div class="lbl" style="margin-bottom:3px;color:var(--amber);">3 — Persoon opvangen</div>
+              <div style="font-size:.82rem;color:var(--muted);">Buddy-protocol activeren. Pas dan.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">SpiegelSessie-agenda</div></div>
+      <div class="card-body">
+        <div style="font-size:.84rem;color:var(--muted);margin-bottom:14px;">
+          Plan per herstelvenster een SpiegelSessie voor het team. Drie vragen, geen beoordeling:
+          <em>Wat heb je gegeven? Wat heeft het gekost? Wat heb je nodig?</em>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;" id="spiegel-agenda"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   WMC 2026 Sergeant Dashboard
+   Data source: localStorage (primary) + Supabase (wanneer actief)
+   Zero Inference: geen reflectieteksten, geen namen in alerts
+══════════════════════════════════════════════════════════════ */
+
+const SUPABASE_URL  = 'https://lkikgzlxvjzavqtkkenf.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraWtnemx4dmp6YXZxdGtrZW5mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0NTQwMzMsImV4cCI6MjA4ODAzMDAzM30.Gs94GTjheUdFGNvP6iK0xIvjj-dIKNDNOPoSZDPyyUQ';
+let SUPABASE_ACTIVE = false;
+
+/* ── Alle WMC-tokens (spiegelt index_wmc.html TOKENS) ── */
+const WMC_TOKENS = {
+  'WMC26-TOM-CEO-2X9P':  {id:'wmc-tom',  wmc_role:'manager',   location:'ALL',     name:'Tom Vannuys'},
+  'WMC26-RALPH-COO-8K4M':{id:'wmc-ralph',wmc_role:'manager',   location:'ALL',     name:'Ralph Lempers'},
+  'WMC26-SGT-ROD-A1B2':  {id:'wmc-s01',  wmc_role:'sergeant',  location:'RODAHAL', name:'Sergeant Rodahal A'},
+  'WMC26-SGT-ROD-C3D4':  {id:'wmc-s02',  wmc_role:'sergeant',  location:'RODAHAL', name:'Sergeant Rodahal B'},
+  'WMC26-SGT-STA-E5F6':  {id:'wmc-s03',  wmc_role:'sergeant',  location:'STADION', name:'Sergeant Stadion A'},
+  'WMC26-SGT-STA-G7H8':  {id:'wmc-s04',  wmc_role:'sergeant',  location:'STADION', name:'Sergeant Stadion B'},
+  'WMC26-SGT-TPL-I9J1':  {id:'wmc-s05',  wmc_role:'sergeant',  location:'TEMPEL',  name:'Sergeant Tempel'},
+  'WMC26-SGT-ARN-K2L3':  {id:'wmc-s06',  wmc_role:'sergeant',  location:'ARENA',   name:'Sergeant Arena'},
+  'WMC26-V001-ROD-M4N5': {id:'wmc-v001', wmc_role:'volunteer', location:'RODAHAL', name:'Vrijwilliger Rodahal 01'},
+  'WMC26-V002-ROD-P6Q7': {id:'wmc-v002', wmc_role:'volunteer', location:'RODAHAL', name:'Vrijwilliger Rodahal 02'},
+  'WMC26-V003-ROD-R8S9': {id:'wmc-v003', wmc_role:'volunteer', location:'RODAHAL', name:'Vrijwilliger Rodahal 03'},
+  'WMC26-V004-ROD-T1U2': {id:'wmc-v004', wmc_role:'volunteer', location:'RODAHAL', name:'Vrijwilliger Rodahal 04'},
+  'WMC26-V005-ROD-V3W4': {id:'wmc-v005', wmc_role:'volunteer', location:'RODAHAL', name:'Vrijwilliger Rodahal 05'},
+  'WMC26-V006-STA-X5Y6': {id:'wmc-v006', wmc_role:'volunteer', location:'STADION', name:'Vrijwilliger Stadion 01'},
+  'WMC26-V007-STA-Z7A8': {id:'wmc-v007', wmc_role:'volunteer', location:'STADION', name:'Vrijwilliger Stadion 02'},
+  'WMC26-V008-STA-B9C1': {id:'wmc-v008', wmc_role:'volunteer', location:'STADION', name:'Vrijwilliger Stadion 03'},
+  'WMC26-V009-STA-D2E3': {id:'wmc-v009', wmc_role:'volunteer', location:'STADION', name:'Vrijwilliger Stadion 04'},
+  'WMC26-V010-STA-F4G5': {id:'wmc-v010', wmc_role:'volunteer', location:'STADION', name:'Vrijwilliger Stadion 05'},
+  'WMC26-V011-TPL-H6I7': {id:'wmc-v011', wmc_role:'volunteer', location:'TEMPEL',  name:'Vrijwilliger Tempel 01'},
+  'WMC26-V012-TPL-J8K9': {id:'wmc-v012', wmc_role:'volunteer', location:'TEMPEL',  name:'Vrijwilliger Tempel 02'},
+  'WMC26-V013-TPL-L1M2': {id:'wmc-v013', wmc_role:'volunteer', location:'TEMPEL',  name:'Vrijwilliger Tempel 03'},
+  'WMC26-V014-ARN-N3P4': {id:'wmc-v014', wmc_role:'volunteer', location:'ARENA',   name:'Vrijwilliger Arena 01'},
+  'WMC26-V015-ARN-Q5R6': {id:'wmc-v015', wmc_role:'volunteer', location:'ARENA',   name:'Vrijwilliger Arena 02'},
+  'WMC26-V016-ARN-S7T8': {id:'wmc-v016', wmc_role:'volunteer', location:'ARENA',   name:'Vrijwilliger Arena 03'},
+  'WMC26-RSV-01-U9V1':   {id:'wmc-r01',  wmc_role:'volunteer', location:'RODAHAL', name:'WMC Reserve 01'},
+  'WMC26-RSV-02-W2X3':   {id:'wmc-r02',  wmc_role:'volunteer', location:'RODAHAL', name:'WMC Reserve 02'},
+  'WMC26-RSV-03-Y4Z5':   {id:'wmc-r03',  wmc_role:'volunteer', location:'STADION', name:'WMC Reserve 03'},
+  'WMC26-RSV-04-A6B7':   {id:'wmc-r04',  wmc_role:'volunteer', location:'STADION', name:'WMC Reserve 04'},
+  'WMC26-RSV-05-C8D9':   {id:'wmc-r05',  wmc_role:'volunteer', location:'TEMPEL',  name:'WMC Reserve 05'},
+};
+
+const ALL_USERS = Object.values(WMC_TOKENS);
+const VOLUNTEERS = ALL_USERS.filter(u => u.wmc_role !== 'manager');
+
+const LOCATIONS = {
+  RODAHAL: {label:'Rodahal',    icon:'🎼', color:'#FF6600'},
+  STADION: {label:'Stadion',    icon:'🏟️', color:'#E5007D'},
+  TEMPEL:  {label:'Tempel',     icon:'🏛️', color:'#FF6600'},
+  ARENA:   {label:'Arena',      icon:'🎪', color:'#E5007D'},
+};
+
+const BADGES = [
+  {id:'DE_VONK',   icon:'⚡', label:'De Vonk',   color:'#FF6600'},
+  {id:'DE_DANS',   icon:'🌍', label:'De Dans',   color:'#E5007D'},
+  {id:'DE_PLEK',   icon:'📍', label:'De Plek',   color:'#4aaa68'},
+  {id:'DE_SPIEGEL',icon:'🪞', label:'De Spiegel',color:'#FF6600'},
+  {id:'DE_BRUG',   icon:'🌉', label:'De Brug',   color:'#FF6600'},
+];
+
+const WEEKENDS = [
+  {label:'W1',name:'Opening & Parade',   dates:'9–12 jul',  intensity:5, herstel:'13–15 jul'},
+  {label:'W2',name:'Mars & Show',        dates:'16–19 jul', intensity:4, herstel:'20–22 jul'},
+  {label:'W3',name:'Concertwedstrijden', dates:'23–26 jul', intensity:3, herstel:'27–29 jul'},
+  {label:'W4',name:'Slotweekend',        dates:'30 jul–2 aug',intensity:5,herstel:'–'},
+];
+
+const TODAY = new Date().toISOString().split('T')[0];
+
+/* ── localStorage helpers ── */
+const ls = {
+  get:(k,fb=null)=>{try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):fb;}catch{return fb;}},
+};
+
+/* ── Read check-in status from localStorage ── */
+function getCheckin(userId) {
+  const c = ls.get(`wmc-checkin-today-${userId}`);
+  if (c && c.date === TODAY) return c.status; // 'GREEN'|'ORANGE'|'RED'
+  return 'NONE';
+}
+
+function getCheckinHistory(userId) {
+  return ls.get(`wmc-checkin-history-${userId}`, []);
+}
+
+function getBadgeState(userId, badgeId) {
+  return ls.get(`wmc-badge-${userId}-${badgeId}`, 'LOCKED');
+}
+
+function getBadgesEarned(userId) {
+  return BADGES.filter(b => getBadgeState(userId, b.id) === 'BADGE_ACTIVE').length;
+}
+
+/* ── Supabase connection attempt ── */
+async function trySupabase() {
+  document.getElementById('db-msg').innerHTML = '<span class="spin"></span>Verbinden…';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/wmc_checkins?limit=1`, {
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`}
+    });
+    if (r.ok) {
+      SUPABASE_ACTIVE = true;
+      setDbStatus('ok', 'Supabase actief — live data beschikbaar');
+      document.getElementById('hdr-source').style.color = 'var(--green)';
+      document.getElementById('hdr-source').textContent = '● Supabase live';
+      loadAll();
+    } else {
+      setDbStatus('warn', `Supabase bereikbaar maar tabellen ontbreken (${r.status}) — voer eerst het SQL-script uit`);
+    }
+  } catch(e) {
+    setDbStatus('off', 'Supabase niet bereikbaar — localStorage modus');
+  }
+}
+
+function setDbStatus(type, msg) {
+  const dot = document.getElementById('db-dot');
+  dot.className = `db-dot db-${type==='ok'?'ok':type==='warn'?'warn':'off'}`;
+  document.getElementById('db-msg').textContent = msg;
+}
+
+/* ── Init ── */
+function init() {
+  document.getElementById('hdr-date').textContent =
+    new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  renderLocations();
+  renderAllSummary();
+  renderBadges();
+  renderAlerts();
+  renderWeekend();
+}
+
+/* ══ VIEW 1 — TEAMOVERZICHT ══ */
+
+function getLocStats(loc) {
+  const users = VOLUNTEERS.filter(u => u.location === loc || u.location === 'ALL');
+  const counts = {GREEN:0, ORANGE:0, RED:0, NONE:0};
+  users.forEach(u => { const s = getCheckin(u.id); counts[s]++; });
+  return {users, counts, total: users.length};
+}
+
+function renderLocations() {
+  const grid = document.getElementById('loc-grid');
+  grid.innerHTML = Object.entries(LOCATIONS).map(([loc, info]) => {
+    const {counts, total} = getLocStats(loc);
+    const checked = total - counts.NONE;
+    const gW = total ? counts.GREEN/total*100 : 0;
+    const oW = total ? counts.ORANGE/total*100 : 0;
+    const rW = total ? counts.RED/total*100 : 0;
+    return `
+      <div class="loc-card" id="loc-${loc}" onclick="selectLocation('${loc}')">
+        <div class="loc-icon">${info.icon}</div>
+        <div class="loc-name">${info.label}</div>
+        <div class="loc-count">${checked}/${total} ingecheckt</div>
+        <div class="loc-bar" style="margin-bottom:10px;">
+          <div class="loc-g" style="width:${gW}%"></div>
+          <div class="loc-o" style="width:${oW}%"></div>
+          <div class="loc-r" style="width:${rW}%"></div>
+          <div class="loc-n"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${counts.GREEN?`<span class="pill pill-g">🟢 ${counts.GREEN}</span>`:''}
+          ${counts.ORANGE?`<span class="pill pill-o">🟠 ${counts.ORANGE}</span>`:''}
+          ${counts.RED?`<span class="pill pill-r">🔴 ${counts.RED}</span>`:''}
+          ${counts.NONE?`<span class="pill pill-n">— ${counts.NONE}</span>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectLocation(loc) {
+  document.querySelectorAll('.loc-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('loc-'+loc)?.classList.add('selected');
+
+  const info = LOCATIONS[loc];
+  const {users} = getLocStats(loc);
+  document.getElementById('detail-title').textContent = `${info.icon} ${info.label} — Team`;
+  document.getElementById('detail-sub').textContent = `${users.length} personen`;
+
+  const body = document.getElementById('detail-body');
+  body.innerHTML = users.sort((a,b)=>{
+    const order={RED:0,ORANGE:1,NONE:2,GREEN:3};
+    return order[getCheckin(a.id)]-(order[getCheckin(b.id)]);
+  }).map(u => {
+    const status = getCheckin(u.id);
+    const dotClass = {GREEN:'dot-g',ORANGE:'dot-o',RED:'dot-r',NONE:'dot-n'}[status];
+    const earned = getBadgesEarned(u.id);
+    const roleLabel = u.wmc_role === 'sergeant' ? '⭐ Sergeant' : '🤝 Vrijwilliger';
+    return `
+      <div class="person-row">
+        <div class="dot ${dotClass}"></div>
+        <div style="flex:1;">
+          <div class="person-name">${u.name}</div>
+          <div class="person-role">${roleLabel}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:.75rem;color:var(--muted);">${earned}/5 badges</div>
+          <div style="font-size:.7rem;color:var(--dim);">${
+            {GREEN:'Groen',ORANGE:'Oranje',RED:'Rood',NONE:'Niet ingecheckt'}[status]
+          }</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('team-detail').style.display = 'block';
+  document.getElementById('all-summary').style.display = 'none';
+  document.getElementById('team-detail').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function clearLocation() {
+  document.querySelectorAll('.loc-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('team-detail').style.display = 'none';
+  document.getElementById('all-summary').style.display = 'block';
+}
+
+function renderAllSummary() {
+  const totals = {GREEN:0, ORANGE:0, RED:0, NONE:0};
+  VOLUNTEERS.forEach(u => { const s = getCheckin(u.id); totals[s]++; });
+  const total = VOLUNTEERS.length;
+  const checked = total - totals.NONE;
+
+  document.getElementById('all-summary-body').innerHTML = `
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div style="text-align:center;">
+        <div class="kpi-num" style="color:var(--sage);">${checked}</div>
+        <div class="kpi-label">ingecheckt</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="kpi-num" style="color:var(--green);">${totals.GREEN}</div>
+        <div class="kpi-label">groen</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="kpi-num" style="color:var(--amber);">${totals.ORANGE}</div>
+        <div class="kpi-label">oranje</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="kpi-num" style="color:var(--red);">${totals.RED}</div>
+        <div class="kpi-label">rood</div>
+      </div>
+    </div>
+    <div style="height:6px;border-radius:3px;overflow:hidden;background:var(--s3);display:flex;margin-bottom:10px;">
+      <div style="background:var(--green);width:${total?totals.GREEN/total*100:0}%;transition:width .4s;"></div>
+      <div style="background:var(--amber);width:${total?totals.ORANGE/total*100:0}%;transition:width .4s;"></div>
+      <div style="background:var(--red);width:${total?totals.RED/total*100:0}%;transition:width .4s;"></div>
+    </div>
+    <div style="font-size:.75rem;color:var(--dim);">${total - checked} vrijwilligers nog niet ingecheckt vandaag</div>`;
+}
+
+function loadAll() {
+  renderLocations();
+  renderAllSummary();
+  renderBadges();
+  renderAlerts();
+}
+
+/* ══ VIEW 2 — BADGES ══ */
+
+function renderBadges() {
+  const filter = document.getElementById('badge-loc-filter')?.value || 'ALL';
+  const users = VOLUNTEERS.filter(u => filter==='ALL' || u.location===filter || u.location==='ALL');
+
+  const body = document.getElementById('badge-body');
+  if (!users.length) { body.innerHTML = '<div class="muted">Geen gebruikers voor deze locatie.</div>'; return; }
+
+  body.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr auto auto auto auto auto auto;gap:0;align-items:center;">
+      <div class="lbl" style="padding:6px 0;border-bottom:1px solid var(--border);">Naam</div>
+      ${BADGES.map(b=>`<div class="lbl" style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:center;" title="${b.label}">${b.icon}</div>`).join('')}
+      <div class="lbl" style="padding:6px 8px;border-bottom:1px solid var(--border);text-align:center;">Tot</div>
+      ${users.sort((a,b)=>getBadgesEarned(b.id)-getBadgesEarned(a.id)).map(u => {
+        const earned = getBadgesEarned(u.id);
+        const checkin = getCheckin(u.id);
+        const dotC = {GREEN:'dot-g',ORANGE:'dot-o',RED:'dot-r',NONE:'dot-n'}[checkin];
+        return `
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div class="dot ${dotC}"></div>
+            <div>
+              <div style="font-size:.84rem;font-weight:500;">${u.name}</div>
+              <div style="font-size:.65rem;color:var(--dim);">${LOCATIONS[u.location]?.label||u.location}</div>
+            </div>
+          </div>
+          ${BADGES.map(b => {
+            const state = getBadgeState(u.id, b.id);
+            const active = state==='BADGE_ACTIVE';
+            const inprog = ['IN_PROGRESS','L1_PASSED','L2_COMPLETE','L3_COMPLETE','AVAILABLE'].includes(state);
+            return `<div style="padding:8px;border-bottom:1px solid var(--border);text-align:center;">
+              <span style="font-size:1rem;filter:${active?`drop-shadow(0 0 4px ${b.color}60)`:inprog?'none':'grayscale(.9)'};opacity:${active?1:inprog?.65:.25};">${b.icon}</span>
+            </div>`;
+          }).join('')}
+          <div style="padding:8px;border-bottom:1px solid var(--border);text-align:center;">
+            <span style="font-family:var(--fm);font-size:.8rem;color:${earned>0?'var(--sage)':'var(--dim)'};">${earned}/5</span>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ══ VIEW 3 — ALERTS ══ */
+
+function renderAlerts() {
+  const alerts = [];
+  VOLUNTEERS.forEach(u => {
+    const status = getCheckin(u.id);
+    if (status === 'RED' || status === 'ORANGE') {
+      const hist = getCheckinHistory(u.id);
+      const isDouble = hist.length>=2 &&
+        hist[hist.length-1].status==='ORANGE' && hist[hist.length-2].status==='ORANGE';
+      alerts.push({
+        type: status==='RED'?'RED':isDouble?'ORANGE_DOUBLE':'ORANGE',
+        location: LOCATIONS[u.location]?.label || u.location,
+        locationIcon: LOCATIONS[u.location]?.icon || '📍',
+        // Zero Inference: geen naam, geen tijdstip details
+      });
+    }
+  });
+
+  // Sort: RED first
+  alerts.sort((a,b)=>a.type==='RED'?-1:b.type==='RED'?1:0);
+
+  document.getElementById('alert-count').textContent = `${alerts.length} actieve ${alerts.length===1?'signaal':'signalen'}`;
+
+  const body = document.getElementById('alert-body');
+  if (!alerts.length) {
+    body.innerHTML = '<div class="muted" style="font-size:.85rem;">✓ Geen actieve alerts vandaag.</div>';
+  } else {
+    body.innerHTML = alerts.map((a,i) => {
+      const isRed = a.type==='RED';
+      const isDouble = a.type==='ORANGE_DOUBLE';
+      return `<div class="alert-row ${isRed?'alert-red':'alert-orange'}">
+        <span style="font-size:1.1rem;">${isRed?'🔴':'🟠'}</span>
+        <div class="alert-text">
+          <div style="font-weight:600;font-size:.84rem;margin-bottom:2px;">
+            ${a.locationIcon} ${a.location} — ${isRed?'Rood signaal':isDouble?'Twee opeenvolgende Oranje':'Oranje signaal'}
+          </div>
+          <div style="font-size:.76rem;color:var(--muted);">
+            ${isRed?'Onmiddellijke opvolging aanbevolen.':isDouble?'Overweeg een SpiegelSessie voor dit weekend.':'Houd dit in de gaten.'}
+          </div>
+        </div>
+        <div class="alert-time">Vandaag</div>
+      </div>`;
+    }).join('');
+  }
+
+  // 7-day stats
+  const last7 = Array.from({length:7}, (_,i)=>{
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    return d.toISOString().split('T')[0];
+  }).reverse();
+
+  const dayCounts = last7.map(date => {
+    const counts = {GREEN:0,ORANGE:0,RED:0};
+    VOLUNTEERS.forEach(u => {
+      const h = getCheckinHistory(u.id);
+      const entry = h.find(e=>e.date===date);
+      if (entry) counts[entry.status]++;
+    });
+    return {date, ...counts};
+  });
+
+  const maxCount = Math.max(...dayCounts.map(d=>d.GREEN+d.ORANGE+d.RED), 1);
+
+  document.getElementById('stats-body').innerHTML = `
+    <div style="display:flex;gap:6px;align-items:flex-end;height:60px;margin-bottom:8px;">
+      ${dayCounts.map(d=>{
+        const total = d.GREEN+d.ORANGE+d.RED||0;
+        const h = Math.max(total/maxCount*100,4);
+        const gH = total?d.GREEN/total*h:0;
+        const oH = total?d.ORANGE/total*h:0;
+        const rH = total?d.RED/total*h:0;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;height:${h}px;">
+          <div style="background:var(--red);width:100%;height:${rH}px;border-radius:2px 2px 0 0;"></div>
+          <div style="background:var(--amber);width:100%;height:${oH}px;"></div>
+          <div style="background:var(--green);width:100%;height:${gH}px;border-radius:0 0 2px 2px;"></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:6px;">
+      ${dayCounts.map(d=>`<div style="flex:1;font-family:var(--fm);font-size:.58rem;color:var(--dim);text-align:center;">
+        ${new Date(d.date+'T12:00').toLocaleDateString('nl-NL',{weekday:'short'}).substring(0,2)}
+      </div>`).join('')}
+    </div>`;
+}
+
+/* ══ VIEW 4 — WEEKEND ══ */
+
+function renderWeekend() {
+  const now = new Date();
+
+  // Weekend pills
+  document.getElementById('weekend-row').innerHTML = WEEKENDS.map((w,i) => {
+    const start = new Date(`2026-07-${[9,16,23,30][i]}T12:00`);
+    const isActive = now >= start && now <= new Date(start.getTime()+4*86400000);
+    const isPast = now > new Date(start.getTime()+4*86400000);
+    return `<div class="wknd${isActive?' active':isPast?' past':''}">
+      <div class="wknd-label">${w.label}${isActive?' — LIVE':''}</div>
+      <div class="wknd-name">${w.name}</div>
+      <div class="wknd-date">${w.dates}</div>
+    </div>`;
+  }).join('');
+
+  // Zaagtand chart
+  const intensities = [5,4,3,5];
+  const maxI = 5;
+  document.getElementById('zaagtand-chart').innerHTML = WEEKENDS.map((w,i)=>{
+    const h = intensities[i]/maxI*100;
+    const col = intensities[i]>=5?'var(--red)':intensities[i]>=4?'var(--amber)':'var(--green)';
+    return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;">
+      <div style="font-family:var(--fm);font-size:.62rem;color:var(--dim);">W${i+1}</div>
+      <div style="width:100%;height:${h}%;background:${col};border-radius:3px 3px 0 0;opacity:.8;min-height:6px;"></div>
+    </div>`;
+  }).join('');
+
+  // SpiegelSessie agenda
+  document.getElementById('spiegel-agenda').innerHTML = WEEKENDS.map((w,i)=>`
+    <div style="padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px;">
+      <div class="lbl" style="margin-bottom:4px;">Na ${w.label}</div>
+      <div style="font-size:.82rem;font-weight:600;margin-bottom:3px;">${w.herstel!=='–'?w.herstel:'Eindsprint'}</div>
+      <div style="font-size:.75rem;color:var(--muted);">${w.herstel!=='–'?'SpiegelSessie plannen':'Finale — geen herstelvenster'}</div>
+    </div>`).join('');
+}
+
+/* ── Tab navigation ── */
+function showTab(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ── Boot ── */
+window.addEventListener('load', () => {
+  init();
+  // Silent Supabase probe (fails gracefully)
+  trySupabase().catch(()=>{});
+});
+</script>
+</body>
+</html>
