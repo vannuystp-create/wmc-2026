@@ -4977,6 +4977,8 @@ function Workspace({user}){
       )}
 
       {/* ── METEN ── */}
+      {tab==='mijnwmc'&&user.wmc_role&&<WmcMijnWMC user={user}/>}
+
       {tab==='meten'&&(
         <div className="w pad fu">
           <div className="h2" style={{marginBottom:20}}>PI Historie</div>
@@ -5264,6 +5266,7 @@ function Workspace({user}){
 
       {/* ── INFO ── */}
       {tab==='info'&&(
+        user.wmc_role ? <WmcInfo user={user}/> : (
         <div className="w pad fu">
           <div className="h2" style={{marginBottom:20}}>Info & Export</div>
           <div className="card cw" style={{marginBottom:14}}>
@@ -5318,13 +5321,16 @@ function Workspace({user}){
             <p className="mut" style={{fontSize:'.9rem'}}>Digital Sanctuary V9.5 — SpiegelSessie actief<br/>Symbiotic Spark BV × Koraal Op de Bies<br/>Pilot maart 2026</p>
           </div>
         </div>
+        )
       )}
 
       {/* Bottom nav */}
       <nav className="bnav">
         {(()=>{
-          const kompasOpen=true; // tijdslot verwijderd
-          return [['🏠','home','Home'],['🎓','academie','Academie'],['📊','meten','Meten'],[kompasOpen?'📚':'🔒','bibliotheek',kompasOpen?'Library':'Gesloten'],['ℹ️','info','Info']].map(([e,id,l])=>(
+          const kompasOpen=true;
+          const wmcNav=[['🏠','home','Home'],['🎓','academie','Academie'],['📈','mijnwmc','Mijn WMC'],['📚','bibliotheek','Bibliotheek'],['ℹ️','info','Info']];
+          const koraalNav=[['🏠','home','Home'],['🎓','academie','Academie'],['📊','meten','Meten'],[kompasOpen?'📚':'🔒','bibliotheek',kompasOpen?'Bibliotheek':'Gesloten'],['ℹ️','info','Info']];
+          return (user.wmc_role?wmcNav:koraalNav).map(([e,id,l])=>(
             <button key={id} className={`nav-i${tab===id?' act':''}`} onClick={()=>{haptic('light');setTab(id)}}>
               <span className="nav-e">{e}</span>{l}
             </button>
@@ -6559,6 +6565,450 @@ function WmcHomePanel({user}) {
 }
 
 /* ═══════════════════════════════════════════════════
+   WMC MIJN WMC — Persoonlijk dashboard
+   Badge-overzicht · Check-in historie · Weekendplanning
+═══════════════════════════════════════════════════ */
+
+const WMC_WEEKENDS = [
+  {id:'w1', label:'Weekend 1', name:'Opening & Parade',     dates:'9–12 juli',    period:'9 jul',  intensity:5, herstel:'13–15 juli', kleur:'#E5007D'},
+  {id:'w2', label:'Weekend 2', name:'Mars & Show',          dates:'16–19 juli',   period:'16 jul', intensity:4, herstel:'20–22 juli', kleur:'#FF6600'},
+  {id:'w3', label:'Weekend 3', name:'Concertwedstrijden',   dates:'23–26 juli',   period:'23 jul', intensity:3, herstel:'27–29 jul',  kleur:'#FF6600'},
+  {id:'w4', label:'Weekend 4', name:'Slotweekend & Finale', dates:'30 jul–2 aug', period:'30 jul', intensity:5, herstel:'–',          kleur:'#E5007D'},
+];
+
+/* ── Badge voortgang kaart ── */
+function WmcBadgePortfolio({userId}) {
+  const allBadges = WMC_MODULES.map(m => ({
+    ...m,
+    state: wmcGetBadge(userId, m.badge),
+    prog: wmcGetProg(userId, m.id),
+  }));
+  const earned = allBadges.filter(b=>b.state==='BADGE_ACTIVE').length;
+
+  const pctFor = (b) => {
+    if(b.state==='BADGE_ACTIVE') return 100;
+    if(b.prog.l3Done) return 90;
+    if(b.prog.l2Done) return 70;
+    if(b.prog.l1Passed) return 50;
+    if(b.prog.p1Done) return 20;
+    return 0;
+  };
+
+  return (
+    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em'}}>BADGE PORTFOLIO</div>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.68rem'}}>
+          <span style={{color:'#FF6600',fontWeight:700}}>{earned}</span>
+          <span style={{color:'var(--dim)'}}>/5 behaald</span>
+        </div>
+      </div>
+      {/* Totale voortgangsbalk */}
+      <div style={{height:4,background:'var(--surface-3)',borderRadius:2,overflow:'hidden',marginBottom:16}}>
+        <div style={{height:'100%',width:`${earned/5*100}%`,background:'linear-gradient(90deg,#FF6600,#E5007D)',borderRadius:2,transition:'width .6s ease'}}/>
+      </div>
+      {/* Per badge */}
+      {allBadges.map(b => {
+        const pct = pctFor(b);
+        const active = b.state==='BADGE_ACTIVE';
+        const locked = b.state==='LOCKED';
+        return (
+          <div key={b.id} style={{display:'flex',alignItems:'center',gap:12,padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+            <div style={{fontSize:'1.2rem',width:24,textAlign:'center',
+              filter:locked?'grayscale(1) opacity(.4)':active?`drop-shadow(0 0 6px ${b.color}60)`:undefined}}>
+              {locked?'🔒':b.icon}
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:4}}>
+                <span style={{fontSize:'.84rem',fontWeight:600,color:active?b.color:'var(--text)'}}>{b.title}</span>
+                <span style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:active?b.color:'var(--dim)',flexShrink:0,marginLeft:8}}>
+                  {active?'✓ Actief':locked?'Vergrendeld':`${pct}%`}
+                </span>
+              </div>
+              <div style={{height:3,background:'var(--surface-3)',borderRadius:2,overflow:'hidden'}}>
+                <div style={{height:'100%',width:`${pct}%`,background:active?b.color:'#FF6600',borderRadius:2,transition:'width .4s ease'}}/>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── Check-in kalender ── */
+function WmcCheckinKalendar({userId}) {
+  const history = ls.get(`wmc-checkin-history-${userId}`, []);
+  const today = new Date();
+
+  // Bouw 28-dagenraster (4 weken)
+  const days = Array.from({length:28}, (_,i) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - 27 + i);
+    const dateStr = d.toISOString().split('T')[0];
+    const entry = [...history].reverse().find(h=>h.date===dateStr);
+    return { dateStr, day:d.getDate(), weekday:d.getDay(), entry };
+  });
+
+  const statusColor = s => ({GREEN:'#4aaa68',ORANGE:'#e8a554',RED:'#c4604a'}[s]||'var(--surface-3)');
+
+  const counts = {GREEN:0,ORANGE:0,RED:0};
+  history.slice(-28).forEach(h=>{if(counts[h.status]!==undefined)counts[h.status]++;});
+
+  return (
+    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:10}}>CHECK-IN HISTORIE — 28 DAGEN</div>
+      {/* Weekdaglabels */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:3,marginBottom:4}}>
+        {['Z','M','D','W','D','V','Z'].map((d,i)=>(
+          <div key={i} style={{textAlign:'center',fontFamily:'var(--font-m)',fontSize:'.55rem',color:'var(--dim)'}}>{d}</div>
+        ))}
+      </div>
+      {/* Dagraster */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:3,marginBottom:12}}>
+        {/* Lege cellen vóór de eerste dag */}
+        {Array.from({length:days[0].weekday===0?6:days[0].weekday-1}, (_,i)=>(
+          <div key={`empty-${i}`}/>
+        ))}
+        {days.map((d,i)=>(
+          <div key={i} title={`${d.dateStr}: ${d.entry?.status||'Niet ingecheckt'}`}
+            style={{aspectRatio:'1',borderRadius:4,
+              background:d.entry?statusColor(d.entry.status):'var(--surface-2)',
+              opacity:d.dateStr===new Date().toISOString().split('T')[0]?1:d.entry?0.85:0.35,
+              border:d.dateStr===new Date().toISOString().split('T')[0]?'1px solid #FF6600':'1px solid transparent',
+            }}/>
+        ))}
+      </div>
+      {/* Legenda + stats */}
+      <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
+        {[['#4aaa68','Groen',counts.GREEN],['#e8a554','Oranje',counts.ORANGE],['#c4604a','Rood',counts.RED]].map(([c,l,n])=>(
+          <div key={l} style={{display:'flex',alignItems:'center',gap:4}}>
+            <div style={{width:8,height:8,borderRadius:2,background:c,flexShrink:0}}/>
+            <span style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)'}}>{l}</span>
+            <span style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--text)',fontWeight:700}}>{n}×</span>
+          </div>
+        ))}
+        <div style={{marginLeft:'auto',fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)'}}>
+          {history.length} totaal
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Weekendplanning ── */
+function WmcWeekendPlanning({userId}) {
+  const [notes, setNotes] = useState(()=>ls.get(`wmc-weekend-notes-${userId}`,{}));
+  const [editing, setEditing] = useState(null);
+  const [draft, setDraft] = useState('');
+  const now = new Date();
+
+  const saveNote = (wId) => {
+    const updated = {...notes, [wId]:draft};
+    ls.set(`wmc-weekend-notes-${userId}`, updated);
+    setNotes(updated);
+    setEditing(null);
+    haptic('medium');
+  };
+
+  return (
+    <div style={{marginBottom:14}}>
+      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:10}}>VIER PIEKWEEKENDEN</div>
+      {WMC_WEEKENDS.map(w => {
+        const start = new Date(`2026-07-${w.period.replace(' jul','').replace(' jul','')}`);
+        const isPast = now > new Date(start.getTime()+4*86400000);
+        const isActive = now >= start && !isPast;
+        const diffDays = Math.ceil((start-now)/(1000*60*60*24));
+        const isEditing = editing===w.id;
+        const note = notes[w.id]||'';
+
+        const bars = Array.from({length:5},(_,i)=>(
+          <div key={i} style={{flex:1,height:i<w.intensity?'100%':'40%',background:i<w.intensity?w.kleur:'var(--surface-3)',borderRadius:2,alignSelf:'flex-end',transition:'height .3s'}}/>
+        ));
+
+        return (
+          <div key={w.id} style={{background:'var(--surface)',border:`1px solid ${isActive?w.kleur+'60':'var(--border)'}`,
+            borderRadius:12,marginBottom:10,overflow:'hidden',
+            opacity:isPast?.7:1}}>
+            <div style={{padding:'12px 14px 0'}}>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                {/* Intensiteitsbalkje */}
+                <div style={{display:'flex',gap:2,height:22,width:40,alignItems:'flex-end',flexShrink:0}}>{bars}</div>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',alignItems:'baseline',gap:6}}>
+                    <span style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:w.kleur,letterSpacing:'.06em'}}>{w.label}</span>
+                    {isActive&&<span style={{fontFamily:'var(--font-m)',fontSize:'.58rem',background:`${w.kleur}20`,color:w.kleur,padding:'1px 5px',borderRadius:8}}>LIVE</span>}
+                    {isPast&&<span style={{fontFamily:'var(--font-m)',fontSize:'.58rem',color:'var(--dim)'}}>Afgerond</span>}
+                    {!isPast&&!isActive&&diffDays>0&&<span style={{fontFamily:'var(--font-m)',fontSize:'.58rem',color:'var(--dim)'}}>{diffDays} dagen</span>}
+                  </div>
+                  <div style={{fontWeight:600,fontSize:'.88rem',color:'var(--text)'}}>{w.name}</div>
+                  <div style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:'var(--muted)'}}>{w.dates}</div>
+                </div>
+              </div>
+              {/* Herstelvenster */}
+              {w.herstel!=='–'&&(
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:8,padding:'5px 8px',background:'var(--surface-2)',borderRadius:6}}>
+                  <span style={{fontSize:'.75rem'}}>🌿</span>
+                  <span style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--muted)'}}>Herstelvenster: {w.herstel}</span>
+                </div>
+              )}
+            </div>
+            {/* Persoonlijke notitie */}
+            <div style={{padding:'0 14px 12px'}}>
+              {isEditing ? (
+                <div>
+                  <textarea value={draft} onChange={e=>setDraft(e.target.value)}
+                    placeholder="Jouw voorbereiding, aandachtspunten, intentie…"
+                    style={{width:'100%',minHeight:72,background:'var(--surface-2)',
+                      border:`1px solid ${w.kleur}40`,borderRadius:8,padding:'8px 10px',
+                      color:'var(--text)',fontSize:'.82rem',fontFamily:'var(--font-b)',
+                      lineHeight:1.6,resize:'none',outline:'none',marginBottom:6}}/>
+                  <div style={{display:'flex',gap:6}}>
+                    <button onClick={()=>saveNote(w.id)}
+                      style={{padding:'6px 14px',background:`${w.kleur}18`,border:`1px solid ${w.kleur}40`,
+                        borderRadius:8,color:w.kleur,fontWeight:600,cursor:'pointer',fontSize:'.8rem'}}>
+                      Opslaan
+                    </button>
+                    <button onClick={()=>{setEditing(null);}}
+                      style={{padding:'6px 10px',background:'none',border:'1px solid var(--border)',
+                        borderRadius:8,color:'var(--dim)',cursor:'pointer',fontSize:'.8rem'}}>
+                      Annuleer
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={()=>{setEditing(w.id);setDraft(note||'');haptic('light');}}
+                  style={{width:'100%',textAlign:'left',background:note?'var(--surface-2)':'transparent',
+                    border:`1px dashed ${note?'var(--border)':w.kleur+'30'}`,borderRadius:8,
+                    padding:'6px 10px',cursor:'pointer',color:note?'var(--muted)':'var(--dim)',
+                    fontSize:'.8rem',lineHeight:1.5,fontFamily:'var(--font-b)'}}>
+                  {note||`+ Notitie voor ${w.label}…`}
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── S+H≥T persoonlijke tracker ── */
+function WmcContinuiteitsCheck({userId}) {
+  const history = ls.get(`wmc-checkin-history-${userId}`,[]);
+  const last7 = history.slice(-7);
+  const greenCount = last7.filter(h=>h.status==='GREEN').length;
+  const orangeCount = last7.filter(h=>h.status==='ORANGE').length;
+  const redCount = last7.filter(h=>h.status==='RED').length;
+  const total = last7.length;
+
+  if(!total) return null;
+
+  const pct = Math.round(greenCount/total*100);
+  const veerkracht = pct>=70?{label:'Sterk',color:'#4aaa68',emoji:'💪'}:
+                     pct>=40?{label:'Kwetsbaar',color:'#e8a554',emoji:'⚠️'}:
+                             {label:'Kritiek',color:'#c4604a',emoji:'🔴'};
+  return (
+    <div style={{background:'var(--surface)',border:`1px solid ${veerkracht.color}30`,borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:10}}>VEERKRACHT — AFGELOPEN 7 DAGEN</div>
+      <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:10}}>
+        <div style={{textAlign:'center',flexShrink:0}}>
+          <div style={{fontFamily:'var(--font-m)',fontSize:'2rem',fontWeight:700,color:veerkracht.color,lineHeight:1}}>{pct}%</div>
+          <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',marginTop:2}}>groen</div>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontWeight:600,fontSize:'.9rem',marginBottom:2}}>{veerkracht.emoji} {veerkracht.label}</div>
+          <div style={{fontFamily:'var(--font-m)',fontSize:'.68rem',color:'var(--muted)',lineHeight:1.5}}>
+            {greenCount}× groen · {orangeCount}× oranje · {redCount}× rood
+          </div>
+        </div>
+      </div>
+      <div style={{height:4,background:'var(--surface-3)',borderRadius:2,overflow:'hidden',display:'flex',gap:1}}>
+        <div style={{background:'#4aaa68',width:`${greenCount/total*100}%`}}/>
+        <div style={{background:'#e8a554',width:`${orangeCount/total*100}%`}}/>
+        <div style={{background:'#c4604a',width:`${redCount/total*100}%`}}/>
+      </div>
+      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',marginTop:8,lineHeight:1.5}}>
+        S+H≥T: jouw veerkracht over de afgelopen week. Groen is de basis voor het volgende weekend.
+      </div>
+    </div>
+  );
+}
+
+/* ── MAIN MIJN WMC ── */
+function WmcMijnWMC({user}) {
+  const uid = user?.id||'demo';
+  const displayName = ls.get(`wmc-displayname-${uid}`)||user?.name||'Vrijwilliger';
+  const loc = user?.location||'ALL';
+  const locInfo = {'RODAHAL':'🎼 Rodahal','STADION':'🏟️ Stadion','TEMPEL':'🏛️ Tempel','ARENA':'🎪 Arena','ALL':'🗺️ Alle locaties'};
+
+  return (
+    <div style={{padding:'16px 16px 100px',maxWidth:540,margin:'0 auto'}}>
+      {/* Header */}
+      <div style={{marginBottom:20}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}}>Mijn WMC 2026</div>
+        <h1 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.75rem',lineHeight:1.1,marginBottom:4}}>{displayName}</h1>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          <span style={{fontFamily:'var(--font-m)',fontSize:'.65rem',padding:'2px 9px',background:'rgba(255,102,0,.12)',border:'1px solid rgba(255,102,0,.3)',borderRadius:10,color:'#FF6600'}}>
+            {locInfo[loc]||loc}
+          </span>
+          <span style={{fontFamily:'var(--font-m)',fontSize:'.65rem',padding:'2px 9px',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:10,color:'var(--muted)'}}>
+            {user?.wmc_role==='sergeant'?'⭐ Sergeant':user?.wmc_role==='manager'?'🎯 Manager':'🤝 Vrijwilliger'}
+          </span>
+        </div>
+      </div>
+
+      <WmcContinuiteitsCheck userId={uid}/>
+      <WmcBadgePortfolio userId={uid}/>
+      <WmcCheckinKalendar userId={uid}/>
+      <WmcWeekendPlanning userId={uid}/>
+    </div>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════
+   WMC INFO — Contacten, FAQ & platform-info
+═══════════════════════════════════════════════════ */
+
+const WMC_LOCATIES = [
+  {naam:'Rodahal',     adres:'Kloosterweg 1, 6412 CN Heerlen',   icon:'🎼', kleur:'#FF6600'},
+  {naam:'Parkstad Stadion', adres:'Valkenburgerweg 106, 6419 AT Heerlen', icon:'🏟️', kleur:'#E5007D'},
+  {naam:'Theater Kerkrade', adres:'Kloosterstraat 20, 6461 DT Kerkrade', icon:'🏛️', kleur:'#FF6600'},
+  {naam:'Abdij Rolduc', adres:'Heyendallaan 82, 6464 EP Kerkrade', icon:'⛪', kleur:'#FF6600'},
+  {naam:'Markt Kerkrade + BLOW!', adres:'Markt, Kerkrade centrum',          icon:'🎪', kleur:'#E5007D'},
+];
+
+const WMC_FAQ = [
+  {q:'Wat doe ik bij een medisch incident?',a:'Alarmeer onmiddellijk: bel 112 + noodlijn Stagemanager. Ga nooit zelf een muzikant verplaatsen. Blijf ter plaatse en wacht op de BHV-medewerker.'},
+  {q:'Wat doe ik als een gast agressief wordt?',a:'Blijf rustig. Verhoog je stem niet. Signaleer naar de dichtstbijzijnde collega of stagemanager. Solo confrontaties vermijden.'},
+  {q:'Mag ik foto\'s maken van muzikanten?',a:'Nee, niet zonder expliciete toestemming. Dit geldt ook tijdens backstage-momenten. Pers heeft aparte accreditatie.'},
+  {q:'Wat als een muzikant zijn instrument kwijt is?',a:'Direct melden bij de stagemanager van die locatie. Nooit zelf zoeken in instrumentenopslag. Het is een verantwoordelijkheid van de organisatie.'},
+  {q:'Wat doe ik als ik mij niet goed voel tijdens een shift?',a:'Doe een Rode check-in in de app. Je Sergeant wordt gesignaleerd. Ga niet door als je de kwaliteit niet kunt borgen — dat is nooit zwak, dat is professioneel.'},
+  {q:'Hoe bereik ik mijn Sergeant?',a:'Via de communicatieset op de locatie, of via het WMC-coördinatiepunt. Nooit per privételefoontje tijdens de shift.'},
+];
+
+function WmcInfo({user}) {
+  const [faqOpen, setFaqOpen] = useState(null);
+  const uid = user?.id||'demo';
+
+  return (
+    <div style={{padding:'16px 16px 100px',maxWidth:540,margin:'0 auto'}}>
+      {/* Header */}
+      <div style={{marginBottom:20}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}}>WMC 2026 · Digital Sanctuary</div>
+        <h1 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.75rem',lineHeight:1.1}}>Info & Contacten</h1>
+      </div>
+
+      {/* Festival info */}
+      <div style={{background:'linear-gradient(135deg,rgba(255,102,0,.12),rgba(229,0,125,.08))',border:'1px solid rgba(255,102,0,.25)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:8}}>WMC 2026 — 75e JUBILEUMEDITIE</div>
+        {[
+          ['📅','9 juli – 2 augustus 2026'],
+          ['📍','Kerkrade, Zuid-Limburg'],
+          ['🎺','252 ensembles · 31 landen'],
+          ['👥','350.000 bezoekers · 20.000 muzikanten'],
+          ['🤝','500+ vrijwilligers'],
+        ].map(([icon,text])=>(
+          <div key={text} style={{display:'flex',gap:8,alignItems:'center',marginBottom:5}}>
+            <span style={{fontSize:'.85rem',flexShrink:0}}>{icon}</span>
+            <span style={{fontSize:'.82rem',color:'var(--muted)'}}>{text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Noodcontacten */}
+      <div style={{background:'rgba(196,96,74,.08)',border:'1px solid rgba(196,96,74,.25)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--red)',letterSpacing:'.08em',marginBottom:10}}>NOODCONTACTEN</div>
+        {[
+          ['112','Spoed — politie/ambulance/brandweer'],
+          ['Stagemanager','Via communicatieset op de locatie'],
+          ['WMC Coördinatie','Coördinatiepunt bij de ingang per locatie'],
+          ['Buddy-systeem','Spreek je buddy aan — die is er voor jou'],
+        ].map(([contact,desc])=>(
+          <div key={contact} style={{display:'flex',gap:10,alignItems:'flex-start',marginBottom:8,paddingBottom:8,borderBottom:'1px solid rgba(196,96,74,.15)'}}>
+            <span style={{fontFamily:'var(--font-m)',fontSize:'.75rem',color:'var(--red)',fontWeight:700,flexShrink:0,minWidth:100}}>{contact}</span>
+            <span style={{fontSize:'.8rem',color:'var(--muted)',lineHeight:1.5}}>{desc}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Locaties */}
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:10}}>LOCATIES</div>
+        {WMC_LOCATIES.map((l,i)=>(
+          <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',marginBottom:8,paddingBottom:8,borderBottom:i<WMC_LOCATIES.length-1?'1px solid var(--border)':'none'}}>
+            <span style={{fontSize:'1rem',flexShrink:0}}>{l.icon}</span>
+            <div>
+              <div style={{fontWeight:600,fontSize:'.85rem',color:'var(--text)',marginBottom:1}}>{l.naam}</div>
+              <div style={{fontSize:'.75rem',color:'var(--dim)',lineHeight:1.4}}>{l.adres}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* FAQ */}
+      <div style={{marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em',marginBottom:10}}>VEELGESTELDE VRAGEN</div>
+        {WMC_FAQ.map((item,i)=>(
+          <div key={i} style={{border:'1px solid var(--border)',borderRadius:10,marginBottom:6,overflow:'hidden'}}>
+            <button onClick={()=>{setFaqOpen(faqOpen===i?null:i);haptic('light');}}
+              style={{width:'100%',padding:'11px 14px',background:'var(--surface)',border:'none',
+                display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer',
+                color:'var(--text)',textAlign:'left',gap:10}}>
+              <span style={{fontSize:'.85rem',fontWeight:500,flex:1}}>{item.q}</span>
+              <span style={{color:'var(--dim)',fontSize:'.75rem',flexShrink:0,
+                transform:faqOpen===i?'rotate(180deg)':'none',transition:'transform .2s'}}>▾</span>
+            </button>
+            {faqOpen===i&&(
+              <div style={{padding:'0 14px 12px',fontSize:'.82rem',color:'var(--muted)',lineHeight:1.6,background:'var(--surface)'}}>
+                {item.a}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Platform info */}
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:8}}>PLATFORM INFO</div>
+        {[
+          ['Platform','Digital Sanctuary V9.5'],
+          ['Organisatie','Symbiotic Spark BV'],
+          ['Contact','tom@symbioticspark.nl'],
+          ['Privacy','Reflecties lokaal opgeslagen · Zero Inference'],
+          ['Data','Checkins anoniem gesynct · Geen PII op server'],
+        ].map(([k,v])=>(
+          <div key={k} style={{display:'flex',justifyContent:'space-between',marginBottom:5,fontSize:'.8rem'}}>
+            <span style={{color:'var(--dim)'}}>{k}</span>
+            <span style={{color:'var(--muted)',textAlign:'right',flex:1,marginLeft:12}}>{v}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Data export */}
+      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px'}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:8}}>JOUW DATA</div>
+        <div style={{fontSize:'.82rem',color:'var(--muted)',marginBottom:10,lineHeight:1.6}}>
+          Al je reflecties en check-ins zijn lokaal opgeslagen op dit apparaat. Je kunt ze exporteren of verwijderen.
+        </div>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          <button onClick={()=>{
+            const data={checkins:ls.get(`wmc-checkin-history-${uid}`,[]),reflections:ls.get(`wmc-refl-${uid}`,{}),badges:WMC_MODULES.map(m=>({badge:m.badge,status:wmcGetBadge(uid,m.badge)}))};
+            const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+            const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`wmc-data-${uid}-${new Date().toISOString().split('T')[0]}.json`;a.click();
+            haptic('medium');
+          }} style={{padding:'8px 14px',background:'var(--sage-b)',border:'1px solid var(--border-act)',borderRadius:8,color:'var(--sage)',fontWeight:600,cursor:'pointer',fontSize:'.8rem'}}>
+            ↓ Exporteer mijn data
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════
    WMC BIBLIOTHEEK — Festival Kennisbank
    Netflix-stijl · Locatie-bewust · Foto-upload
 ═══════════════════════════════════════════════════ */
@@ -6949,6 +7399,183 @@ Weet de tijden. Weet de locaties. Maar weet ook: spontaan betekent soms echt spo
 Warm, laagdrempelig, energiek. Dit is het WMC voor mensen die nog nooit van het WMC hebben gehoord. Jij bent hun eerste indruk. Maak hem warm.`},
 ];
 
+/* ── Uitgebreide bibliotheek — Methode & Orchestratie ── */
+const WMC_ARTICLES_EXTRA = [
+  {id:'ooda-wmc',title:'De 30-seconden loop',sub:'Lees de situatie voordat je handelt',cat:'Methode',catColor:'#FF6600',loc:null,role:null,readMin:8,thumb:'eye',
+    body:`In 1960 bedacht kolonel John Boyd een besluitvormingsmodel voor straaljagerpiloten. Observe, Orient, Decide, Act. De OODA-loop. Het klinkt ver weg van een festivalvloer in Kerkrade. Het is de kern van wat jij elke dienst doet.
+
+**Observeren — de eerste tien seconden**
+
+Een muzikant loopt backstage. Wat zie je? Niet wie je denkt te zien — wat zie je letterlijk. Rugzak over beide schouders of aan één kant? Kijkt hij naar de wegwijzers of naar de grond? Maakt hij oogcontact of bewust niet?
+
+Dit zijn datapunten, geen conclusies. De fout die je maakt is te snel interpreteren. "Man met baard en grote koffer" is een observatie. "Hij zoekt waarschijnlijk de kluizenruimte" is al een conclusie — en conclusies kunnen fout zijn.
+
+Je hebt tien seconden. Gebruik ze puur om te zien.
+
+**Oriënteren — de verbinding maken**
+
+Nu verbind je wat je zag met wat je weet. Bezoeker die naar zijn telefoon kijkt terwijl hij rond de kaart staat — hij is verdwaald maar wil niet om hulp vragen. Muzikant die met gesloten ogen op een bankje zit — hij calibreert. Groep van zes die lachend maar snel loopt — zij zijn te laat voor hun repetitieruimte.
+
+De oriëntatie is het menselijke element. De machine-learning van sociale signalen die jij in jaren hebt opgebouwd. Hier zit jouw waarde als medewerker — niet in het kennen van routebeschrijvingen, maar in het begrijpen van de context achter de vraag.
+
+**Beslissen — kies de vorm, niet alleen de inhoud**
+
+De beslissing is niet wat je gaat doen. De beslissing is hóe. Of jij de interactie vormgeeft als:
+
+→ Veiligheid en ruimte: je zegt niets, je plaatst jezelf zichtbaar en beschikbaar.
+→ Proactief en beknopt: je wijst zonder te spreken, of je loopt mee zonder uitleg.
+→ Verbindend: je benoemt wat je ziet en stelt één gerichte vraag.
+
+**Handelen — met zelfvertrouwen**
+
+Omdat je hebt geobserveerd en georiënteerd, handel je niet reactief. Dat is het verschil dat mensen voelen maar niet kunnen benoemen. Wat in vijfsterren-reviews verschijnt als "het personeel wist precies wat ik nodig had, nog voordat ik het zelf wist."
+
+En als je inschatting fout was? Geen mislukte loop. Nieuwe data. De loop begint opnieuw — en de tweede ronde duurt vijf seconden.
+
+**Slotnoot**
+
+Boyd ontwikkelde dit voor piloten in een cockpit. De inzet is bij ons gelukkig lager. Maar het principe blijft: wie sneller en accurater door zijn loop gaat dan de situatie zich ontwikkelt, heeft de regie.
+
+De volgende keer dat je de vloer opstapt: stop twee tellen. Observeer. Oriënteer. Beslis. Dan loop je.`},
+
+  {id:'structured-authenticity',title:'Strakke systemen, vrije mensen',sub:'Waarom structuur spontaniteit maakt',cat:'Methode',catColor:'#FF6600',loc:null,role:null,readMin:7,thumb:'shield',
+    body:`Er is een paradox in hoe mensen over regels denken. Meer regels = minder vrijheid. Het klopt niet. En de beste organisaties ter wereld weten waarom.
+
+**Het chocolaatje in het pinguinbakje**
+
+In een restaurant in Limburg heeft een medewerker ooit een kinderijsje geserveerd in een plastic pinguinbakje. Het kind was er weg van. Toen het gezin vertrok, pakte de medewerker het bekertje mee, maakte het schoon, stopte er een chocolaatje in, en gaf het terug aan het meisje met de tekst: "pas thuis openmaken."
+
+Dat staat nergens in een protocol. Dat kun je niet vastleggen in een handboek.
+
+Maar hier is de sleutel: dit gebaar was alleen mogelijk omdat de medewerker niet gestresst was. Het systeem eromheen — duidelijke taakverdeling, heldere communicatie, goed georganiseerde logistiek — gaf hem mentale bandbreedte. En in die ruimte paste het chocolaatje.
+
+**Het principe toegepast op WMC**
+
+Het Digital Sanctuary is hetzelfde principe in code. De modules, de badge-structuur, de dagelijkse check-in, de ZAKVE-doctrine — dit is het strakke systeem. Niet om jou in een keurslijf te duwen, maar om de brandjes te voorkomen zodat jij die ene muzikant ziet die net zijn instrument heeft laten vallen en een hand nodig heeft.
+
+Gestructureerde authenticiteit: definieer het wat. Geef vrijheid in het hoe.
+
+Het wat bij WMC: jij staat op jouw post, jij kent jouw locatie, jij weet de route, jij kent het protocol.
+
+Het hoe bij WMC: de manier waarop jij iemand aankijkt. De grap die je maakt met een kind dat zijn ballonnetje kwijt is. Het moment dat jij een uitgeputte muzikant stilletjes naar de enige stoel in de gang wijst — zonder een woord te zeggen.
+
+**Wat dit voor jou betekent**
+
+Als jij na een shift het gevoel hebt dat je alleen maar afvinklijstjes hebt afgewerkt, is er iets mis. Een goed systeem zou je moeten bevrijden, niet beknotten.
+
+De vraag na elke shift: had ik vandaag mentale ruimte voor een chocolaatje-moment? Zo ja — het systeem werkt. Zo nee — wat nam die ruimte in beslag?
+
+**De onkopieerbare handtekening**
+
+De concurrent kan jouw uniform kopiëren. Ze kunnen jouw locatie kopiëren. Ze kunnen de tekst van elk protocol kopiëren.
+
+Ze kunnen niet kopiëren wat er spontaan en oprecht is. Ze kunnen het chocolaatje niet kopiëren als het systeem er niet voor zorgt dat de medewerker de ruimte heeft om het te zien.
+
+Jouw aanwezigheid, op dit festival, op dit moment — dat is de onkopieerbare handtekening. Gebruik hem.`},
+
+  {id:'dirigent-vloer',title:'Dirigent op de vloer',sub:'Van operator naar orchestrator',cat:'Sergeant-academie',catColor:'#4aaa68',loc:null,role:'sergeant',readMin:9,thumb:'star',
+    body:`Er is een moment in de carrière van elke goede medewerker dat zijn succes zijn grootste obstakel wordt. Hij is de beste op de vloer. Hij lost problemen op voordat ze problemen zijn. En dan wordt hij Sergeant. En dan maakt hij de klassieke fout: hij probeert alsnog de beste medewerker te zijn. Terwijl zijn team hem nodig heeft als dirigent.
+
+**De stap van operator naar orchestrator**
+
+Een muzikant in een orkest is een operator. Hij speelt zijn partij perfect. Een dirigent is een orchestrator. Hij luistert niet naar zijn eigen partij — hij luistert naar alle partijen tegelijk, en corrigeert wat afwijkt van het geheel.
+
+Jouw succes als Sergeant wordt niet gemeten aan hoe snel jij zelf loopt, maar aan hoe geolied het team onder jouw leiding draait.
+
+Je instinct schreeuwt het tegengestelde. Je ziet borden die wegmoeten. Je pakt ze op. In dat moment heb je je helikopterview ingeruild voor een dienblad.
+
+**De macro-loop**
+
+Een medewerker runt een micro-loop: zijn eigen wijk, zijn eigen gasten, zijn eigen verantwoordelijkheid. Als Sergeant run jij de macro-loop. Je observeert niet individuen maar systemen.
+
+En je denkt niet aan nu. Je denkt aan over twintig minuten. Second-order thinking.
+
+Concreet voor WMC: jij ziet een groep van veertig mensen die al anderhalf uur in dezelfde sectie zitten. De mars-wedstrijd eindigt over vijftien minuten. Wat gebeurt er dan? Ze willen allemaal tegelijk naar de uitgang. Nu is het moment om te handelen — niet over vijftien minuten als de chaos er al is.
+
+**De handenvrij-regel**
+
+Praktisch principe: je doet maximaal 70% van de tijd fysiek werk. De andere 30% is voor scannen. Dat is niet luiheid. Dat is jouw operationele opdracht.
+
+Positioneer jezelf op een strategisch punt van waaruit je de vloer kunt overzien. En stel de juiste vraag aan je team: niet "lukt het?" — gesloten vraag, voorspelbaar antwoord. Maar: "wat heb je nodig?" Dat is een uitnodiging tot echte communicatie.
+
+**Jouw kalmte is de thermostaat**
+
+Als de leider rent, gaat het team vliegen. Jouw emotionele toestand is besmettelijk — in beide richtingen.
+
+Als jij kalm bent wanneer het hectisch wordt, communiceert dat naar je team: dit is beheersbaar. Als jij in paniek raakt bij het eerste incident, communiceert dat: dit is groter dan ons systeem aankan.
+
+**De veiligheidsladder**
+
+Een team kan pas groeien als het zich veilig voelt. Veilig om fouten te maken. Veilig om hulp te vragen. Veilig om spontaan een goed idee te implementeren.
+
+Jij bouwt die ladder. Trede voor trede. Door te zijn wie jij bent op de vloer: kalm, overzichtelijk, beschikbaar — maar nooit degene met het volle dienblad.
+
+Einde van elke shift. Één vraag: op welke trede staat mijn team vandaag? En welke trede zetten ze morgen, met mijn hulp?`},
+
+  {id:'gastenreis-muzikant',title:'De gastenreis van een muzikant',sub:'Negen contactmomenten die tellen',cat:'Muzikanten begrijpen',catColor:'#E5007D',loc:null,role:null,readMin:10,thumb:'trumpet',
+    body:`Een muzikant die aan het WMC deelneemt, doorloopt een reis van meerdere dagen. Die reis heeft negen kritieke contactmomenten. Bij elk moment heb jij de kans om de toon te zetten — of te missen.
+
+**1. Aankomst — de eerste dertig seconden**
+
+Ze komen na een vlucht van acht uur, of een busrit van veertien. Ze zijn gedesoriënteerd. Ze zoeken: een plek om te zitten, water, weten waar ze naartoe moeten.
+
+Fout: onmiddellijk een welkomstpresentatie starten. Goed: aanwezig zijn zonder op te dringen. Wijs. Geef water. Wacht.
+
+**2. Inchecken bij Rolduc — het ankerpunt**
+
+Dit is het moment waarop de logistieke stress overgaat in anticipatie. Eén open vraag: "Is er iets wat u nu het meest wilt weten?" Dat geeft jou de data, en hen het gevoel dat ze controle hebben.
+
+**3. Eerste repetitie — het kalibratiemoment**
+
+De ruimte is nieuw. De akoestiek is anders. De dirigent is gespannen.
+
+Je taak: stil aanwezig. Deur op het juiste moment dicht. Water beschikbaar zonder dat er om gevraagd wordt. Geen overbodige beweging.
+
+**4. De avond voor het optreden — de stille nacht**
+
+Ze eten vroeg of laat. Ze slapen vroeg of niet. Ze zijn stil of luidruchtig van de nervositeit. Beide zijn normaal.
+
+Je taak: ruimte geven. Geen inhoudelijke gesprekken over het concours. Praktisch: zorg dat de wegen naar bucht, koffie, buitenlucht vrij zijn van obstakels.
+
+**5. De ochtend van het optreden — het kookpunt**
+
+Ze zijn gefocust. Ze zijn in hun eigen wereld.
+
+Dit is het moment dat het meest misloopt: medewerkers denken onterecht dat de muzikant nu aangespreekbaar is. Hij is het niet.
+
+Je taak: verkeersregelaar, niet gastheer. Eén uitzondering: als iemand een logistiek probleem heeft — instrument kwijt, bushalte klopt niet — dan schakel je onmiddellijk en resoluut.
+
+**6. De tien minuten vóór het optreden — heilige stilte**
+
+Er is een zone van tien minuten die heilig is. Geen vragen. Geen aankondigingen. Geen beweging tenzij operationeel noodzakelijk.
+
+Dit zijn de tien minuten waarop een muzikant de kloof overbrugt tussen mens en vertolker. Jij bent in deze tien minuten het meest waardevol door niets te doen.
+
+**7. Het optreden zelf — jij bent het systeem**
+
+Terwijl zij spelen, bewaar jij de orde. De deuren. De stilte. De routes voor het publiek. Je bent niet toeschouwer. Je bent de infrastructuur die het optreden mogelijk maakt.
+
+**8. Direct na het optreden — de ontlading**
+
+Iedereen wil reageren. Feliciteren. Vragen hoe het ging. Doe het niet.
+
+Een muzikant na een optreden is fysiologisch in een ontladingsfase. Hartslag daalt. Spieren ontspannen. Het brein verwerkt. Dit duurt vijftien tot veertig minuten.
+
+Water. Stoel. Ruimte. In die volgorde. Zonder woorden als dat kan.
+
+Pas als zij de interactie initiëren, is er ruimte. Niet eerder.
+
+**9. Het afscheid — de handtekening onder de ervaring**
+
+Ze gaan terug naar Osaka, naar Bogotá, naar Warschau. De allerlaatste indruk die ze van Kerkrade meenemen, is mede bepaald door dit moment.
+
+Het hoeft niet groots. Een glimlach op het goede moment. Iemand die helpt met een koffer zonder dat ernaar gevraagd wordt. "Veilige reis" in de taal van het ensemble — ook als je die maar drie woorden van spreekt.
+
+Reviews worden geschreven op basis van hoe mensen zich voelden bij het weggaan. Niet bij het aankomen. Niet tijdens het optreden. Bij het weggaan. Dat moment ben jij.`},
+];
+
+const ALL_WMC_ARTICLES = [...WMC_ARTICLES, ...WMC_ARTICLES_EXTRA];
+
 /* ── Foto upload hook ── */
 function useLibPhoto(articleId, userId) {
   const key = `wmc-lib-photo-${userId}-${articleId}`;
@@ -7119,7 +7746,7 @@ function WmcBibliotheek({user}) {
   const onClose = () => { setOpenArticle(null); setTick(t=>t+1); };
 
   // Filtered & searched articles
-  const visible = WMC_ARTICLES.filter(a => {
+  const visible = ALL_WMC_ARTICLES.filter(a => {
     if (a.role && a.role !== role && role !== 'manager') return false;
     if (search) {
       const q = search.toLowerCase();
@@ -7147,9 +7774,9 @@ function WmcBibliotheek({user}) {
     );
   };
 
-  const featured = WMC_ARTICLES.find(a=>a.featured) || WMC_ARTICLES[0];
+  const featured = ALL_WMC_ARTICLES.find(a=>a.featured) || ALL_WMC_ARTICLES[0];
   const { photo: heroPhoto } = useLibPhoto(featured.id, uid);
-  const readCount = WMC_ARTICLES.filter(a=>!!ls.get(`wmc-lib-read-${uid}-${a.id}`)).length;
+  const readCount = ALL_WMC_ARTICLES.filter(a=>!!ls.get(`wmc-lib-read-${uid}-${a.id}`)).length;
 
   return (
     <div style={{paddingBottom:100}}>
@@ -7194,7 +7821,7 @@ function WmcBibliotheek({user}) {
             style={{background:'none',border:'none',color:'var(--dim)',cursor:'pointer',fontSize:'.8rem'}}>✕</button>}
         </div>
         <div style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:'var(--dim)',whiteSpace:'nowrap',flexShrink:0}}>
-          <span style={{color:'var(--sage)'}}>{readCount}</span>/{WMC_ARTICLES.length} gelezen
+          <span style={{color:'var(--sage)'}}>{readCount}</span>/{ALL_WMC_ARTICLES.length} gelezen
         </div>
       </div>
 
@@ -7211,6 +7838,7 @@ function WmcBibliotheek({user}) {
           {section('Jouw locatie',a=>a.loc===loc)}
           {section('WMC Verhalen',a=>a.cat==='WMC Verhaal',true)}
           {section('Muzikanten begrijpen',a=>a.cat==='Muzikanten begrijpen')}
+          {section('Methode & Mindset',a=>a.cat==='Methode')}
           {section('Protocollen',a=>a.cat==='Protocol')}
           {section('Arena-gidsen',a=>a.cat==='Arena-gids')}
           {section('Tempel-gidsen',a=>a.cat==='Tempel-gids'&&a.loc!==loc)}
