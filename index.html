@@ -6,23 +6,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#07090d">
-  <title>Koraal Op de Bies — Digital Sanctuary 2026 · V8.1</title>
-  
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <title>WMC 2026 · Digital Sanctuary — Symbiotic Spark</title>
   
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700;800&family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
     :root {
       --void: #07090d;
@@ -112,9 +103,14 @@
       --b0:               rgba(255,102,0,.12);
       --b1:               rgba(255,102,0,.38);
 
-      /* ── Typografie: Montserrat (WMC official sans-serif) ── */
-      --font-body:        'Montserrat', 'DM Sans', -apple-system, sans-serif;
-      --font-b:           'Montserrat', 'DM Sans', -apple-system, sans-serif;
+      /* ── Typografie WMC: Bebas Neue · Barlow · JetBrains Mono (v4 designsysteem) ── */
+      --font-display:     'Bebas Neue', sans-serif;
+      --font-d:           'Bebas Neue', sans-serif;
+      --font-body:        'Barlow', 'DM Sans', sans-serif;
+      --font-b:           'Barlow', 'DM Sans', sans-serif;
+      --font-c:           'Barlow Condensed', sans-serif;
+      --font-mono:        'JetBrains Mono', monospace;
+      --font-m:           'JetBrains Mono', monospace;
 
       /* ── Achtergrond: diep marineblauw ── */
       --bg:               #07090f;
@@ -187,8 +183,486 @@
     }
     .wmc-role-label {
       font-size: .62rem; color: var(--text-dim); margin-top: 3px;
-      font-family: 'Montserrat', monospace; letter-spacing: .04em;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: .04em;
     }
+
+    /* ═══════════════════════════════════════════════════════
+       WMC 2026 · CINEMATIC COMPONENT DESIGN SYSTEM (v4)
+       Fonts: Bebas Neue · Barlow · JetBrains Mono
+       Kleuren: #FF6600 oranje · #E5007D magenta · #0A0A0A
+    ═══════════════════════════════════════════════════════ */
+
+    /* ── WMC Onboarding Wrapper ── */
+    .wmc-ob-root {
+      --ob-orange: #FF6600;
+      --ob-magenta: #E5007D;
+      --ob-heart: linear-gradient(135deg, #FF6600, #E5007D);
+      --ob-bg: #0a0a0a;
+      --ob-card: rgba(20,20,20,.95);
+      --ob-border: rgba(255,102,0,.18);
+      --ob-text: #F0EDE8;
+      --ob-muted: #9A9690;
+      --ob-dim: #4A4644;
+      background: var(--ob-bg);
+      min-height: 100vh;
+      font-family: 'Barlow', sans-serif;
+      color: var(--ob-text);
+    }
+
+    /* ── WMC Onboarding Header ── */
+    .wmc-ob-hdr {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10,10,10,.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,102,0,.12);
+      padding: 12px 20px;
+    }
+    .wmc-ob-hdr-inner {
+      display: flex; align-items: center; gap: 10;
+      max-width: 480px; margin: 0 auto;
+    }
+    .wmc-ob-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; letter-spacing: 3px; color: #F0EDE8;
+      display: flex; align-items: center; gap: 8px; flex: 1;
+    }
+    .wmc-ob-heart {
+      width: 20px; height: 20px; flex-shrink: 0;
+      background: linear-gradient(135deg, #FF6600, #E5007D);
+      clip-path: path("M10 17s-8.5-5.3-8.5-9.9a4.25 4.25 0 0 1 8.5 0 4.25 4.25 0 0 1 8.5 0C18.5 11.7 10 17 10 17z");
+    }
+    .wmc-ob-steps {
+      display: flex; gap: 4px;
+    }
+    .wmc-ob-step-dot {
+      height: 3px; border-radius: 2px;
+      transition: all .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── WMC Onboarding Content ── */
+    .wmc-ob-content {
+      padding: 28px 20px 0;
+      max-width: 480px; margin: 0 auto;
+    }
+
+    /* ── WMC hero step ── */
+    .wmc-ob-hero-step {
+      padding: 0 0 100px; text-align: center;
+    }
+    .wmc-ob-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .28em; text-transform: uppercase;
+      color: #FF6600; margin-bottom: 14px; display: block;
+    }
+    .wmc-ob-h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 10vw, 4rem);
+      letter-spacing: 2px; line-height: .96;
+      color: #F0EDE8; margin-bottom: 18px;
+    }
+    .wmc-ob-h1 em { color: #FF6600; font-style: normal; }
+    .wmc-ob-h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      letter-spacing: 2px; line-height: .96;
+      color: #F0EDE8; margin-bottom: 16px;
+    }
+    .wmc-ob-h2 em { color: #FF6600; font-style: normal; }
+    .wmc-ob-body {
+      font-family: 'Barlow', sans-serif;
+      font-size: .95rem; line-height: 1.75;
+      color: #9A9690; margin-bottom: 24px;
+    }
+
+    /* ── WMC pill group ── */
+    .wmc-ob-pills {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 32px;
+    }
+    .wmc-ob-pill {
+      padding: 7px 16px;
+      background: rgba(255,102,0,.08);
+      border: 1px solid rgba(255,102,0,.28);
+      border-radius: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem; letter-spacing: .12em;
+      text-transform: uppercase; color: #FF6600;
+    }
+
+    /* ── WMC Heart CTA ── */
+    .wmc-ob-cta {
+      display: block; width: 100%; max-width: 400px;
+      margin: 0 auto; padding: 16px 24px;
+      background: linear-gradient(135deg, #FF6600, #E5007D);
+      border: none; border-radius: 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: #fff;
+      cursor: pointer; transition: all .25s;
+      box-shadow: 0 4px 24px rgba(255,102,0,.28);
+    }
+    .wmc-ob-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,102,0,.38); }
+    .wmc-ob-cta:disabled {
+      background: rgba(255,255,255,.06);
+      color: #4A4644; cursor: not-allowed;
+      box-shadow: none; transform: none;
+    }
+    .wmc-ob-cta-ghost {
+      display: block; width: 100%; max-width: 400px;
+      margin: 0 auto; padding: 14px 24px;
+      background: rgba(255,102,0,.08);
+      border: 1px solid rgba(255,102,0,.35);
+      border-radius: 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: #FF6600;
+      cursor: pointer; transition: all .2s;
+    }
+    .wmc-ob-cta-ghost:disabled {
+      background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08);
+      color: #4A4644; cursor: not-allowed;
+    }
+
+    /* ── WMC info card in onboarding ── */
+    .wmc-ob-card {
+      background: rgba(20,20,20,.95);
+      border: 1px solid rgba(255,102,0,.15);
+      border-radius: 12px; padding: 16px 18px; margin-bottom: 12px;
+      text-align: left;
+    }
+    .wmc-ob-card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .18em; text-transform: uppercase;
+      color: #FF6600; margin-bottom: 8px; display: block;
+    }
+    .wmc-ob-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem; font-weight: 700; color: #F0EDE8;
+      margin-bottom: 6px; letter-spacing: .02em;
+    }
+    .wmc-ob-card-body {
+      font-family: 'Barlow', sans-serif;
+      font-size: .85rem; color: #9A9690; line-height: 1.65;
+    }
+
+    /* ── WMC Location hero (step 2) ── */
+    .wmc-ob-loc-hero {
+      border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+      position: relative;
+    }
+    .wmc-ob-loc-hero-bg {
+      padding: 32px 20px 24px;
+      text-align: center; position: relative; z-index: 1;
+    }
+    .wmc-ob-loc-icon {
+      font-size: 3rem; margin-bottom: 12px; display: block;
+      filter: drop-shadow(0 0 20px rgba(255,102,0,.4));
+    }
+    .wmc-ob-loc-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem; letter-spacing: 3px; color: #F0EDE8;
+      margin-bottom: 8px; display: block;
+    }
+    .wmc-ob-loc-desc {
+      font-family: 'Barlow', sans-serif;
+      font-size: .9rem; color: rgba(240,237,232,.75);
+      line-height: 1.6; font-style: italic;
+    }
+
+    /* ── WMC consent checkbox ── */
+    .wmc-ob-consent {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,102,0,.15);
+      border-radius: 10px; cursor: pointer;
+      margin-bottom: 16px; margin-top: 8px;
+      transition: all .2s;
+    }
+    .wmc-ob-consent.on {
+      background: rgba(255,102,0,.08);
+      border-color: rgba(255,102,0,.42);
+    }
+
+    /* ── WMC input field ── */
+    .wmc-ob-input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,102,0,.2);
+      border-radius: 10px; color: #F0EDE8;
+      font-size: 1.1rem; font-family: 'Barlow', sans-serif;
+      outline: none; margin-bottom: 20px;
+      transition: border-color .2s;
+    }
+    .wmc-ob-input:focus { border-color: rgba(255,102,0,.6); }
+    .wmc-ob-input::placeholder { color: #4A4644; }
+    .wmc-ob-input-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;
+      color: #9A9690; display: block; margin-bottom: 8px;
+    }
+
+    /* ── WMC ambient background ── */
+    .wmc-ob-ambient {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 40% at 20% -5%, rgba(255,102,0,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 35% at 80% 105%, rgba(229,0,125,.05) 0%, transparent 60%);
+    }
+
+    /* ── WMC Countdown Card (cinematic) ── */
+    .wmc-countdown {
+      position: relative; overflow: hidden;
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 14px;
+      background: linear-gradient(135deg,rgba(255,102,0,.12) 0%,rgba(229,0,125,.10) 100%);
+      border: 1px solid rgba(255,102,0,.28);
+    }
+    .wmc-countdown-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .25em; text-transform: uppercase;
+      color: rgba(255,102,0,.8); margin-bottom: 8px;
+    }
+    .wmc-countdown-main {
+      display: flex; align-items: flex-end; gap: 6px; margin-bottom: 4px;
+    }
+    .wmc-countdown-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem; line-height: 1; letter-spacing: 1px;
+      background: linear-gradient(135deg, #FF6600, #E5007D);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .wmc-countdown-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem; letter-spacing: .12em; color: #9A9690;
+      padding-bottom: 10px;
+    }
+    .wmc-countdown-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 600; color: #F0EDE8;
+      letter-spacing: .04em; margin-bottom: 2px;
+    }
+    .wmc-countdown-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .55rem; color: #9A9690; letter-spacing: .08em;
+    }
+    .wmc-countdown-live {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+      color: #4aaa68; display: flex; align-items: center; gap: 6px;
+    }
+    .wmc-countdown-livdot {
+      width: 7px; height: 7px; border-radius: 50%; background: #4aaa68;
+      box-shadow: 0 0 0 3px rgba(74,170,104,.2);
+      animation: wcPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes wcPulse { 0%,100%{box-shadow:0 0 0 3px rgba(74,170,104,.2)} 50%{box-shadow:0 0 0 6px rgba(74,170,104,.0)} }
+
+    /* ── WMC Check-in Card (cinematic) ── */
+    .wmc-checkin-card {
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 14px;
+      background: rgba(14,14,20,.95);
+      border: 1px solid rgba(255,102,0,.15);
+    }
+    .wmc-checkin-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .2em; text-transform: uppercase;
+      color: #FF6600; margin-bottom: 10px;
+    }
+    .wmc-checkin-sub {
+      font-family: 'Barlow', sans-serif;
+      font-size: .85rem; color: #9A9690; line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .wmc-checkin-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    }
+    .wmc-checkin-btn {
+      padding: 16px 8px;
+      border-radius: 10px;
+      border: 1px solid;
+      cursor: pointer; text-align: center;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      transition: all .2s;
+      background: transparent;
+    }
+    .wmc-checkin-btn:hover { transform: translateY(-2px); }
+    .wmc-checkin-btn-icon {
+      font-size: 1.6rem; line-height: 1;
+    }
+    .wmc-checkin-btn-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 1px;
+    }
+    .wmc-checkin-btn-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .48rem; letter-spacing: .08em; color: #9A9690;
+    }
+    .wmc-checkin-done {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-radius: 14px; margin-bottom: 14px;
+      border: 1px solid;
+    }
+    .wmc-checkin-done-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .15em; text-transform: uppercase;
+      color: #4A4644; margin-bottom: 3px;
+    }
+    .wmc-checkin-done-status {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .95rem; font-weight: 700; letter-spacing: .04em;
+    }
+    .wmc-checkin-footer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; color: #4A4644;
+      text-align: center; margin-top: 10px; letter-spacing: .04em;
+    }
+
+    /* ── WMC Badge Strip (cinematic) ── */
+    .wmc-badge-strip {
+      border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+      background: rgba(14,14,20,.95);
+      border: 1px solid rgba(255,102,0,.12);
+    }
+    .wmc-badge-strip-hdr {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .wmc-badge-strip-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .2em; text-transform: uppercase;
+      color: #FF6600;
+    }
+    .wmc-badge-strip-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 1px;
+      background: linear-gradient(135deg, #FF6600, #E5007D);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .wmc-badge-row {
+      display: flex; gap: 8px;
+    }
+    .wmc-badge-item {
+      flex: 1; text-align: center;
+    }
+    .wmc-badge-icon {
+      font-size: 1.4rem; display: block; transition: all .3s;
+      margin-bottom: 4px;
+    }
+    .wmc-badge-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .5rem; letter-spacing: .06em;
+      transition: color .3s;
+    }
+    .wmc-badge-prog {
+      margin-top: 12px; height: 2px;
+      background: rgba(255,255,255,.06); border-radius: 1px; overflow: hidden;
+    }
+    .wmc-badge-prog-fill {
+      height: 100%; border-radius: 1px;
+      background: linear-gradient(90deg, #FF6600, #E5007D);
+      transition: width .8s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── WMC Location Briefing (cinematic) ── */
+    .wmc-briefing {
+      border-radius: 14px; overflow: hidden;
+      margin-bottom: 14px; position: relative;
+    }
+    .wmc-briefing-inner {
+      padding: 16px 18px; position: relative; z-index: 1;
+    }
+    .wmc-briefing-hdr {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .wmc-briefing-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .wmc-briefing-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .18em; text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .wmc-briefing-regel {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .95rem; font-weight: 600; color: #F0EDE8;
+      letter-spacing: .02em; font-style: italic;
+    }
+    .wmc-briefing-tips { display: flex; flex-direction: column; gap: 6px; }
+    .wmc-briefing-tip {
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .wmc-briefing-tip-dot {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; flex-shrink: 0; margin-top: 1px;
+    }
+    .wmc-briefing-tip-text {
+      font-family: 'Barlow', sans-serif;
+      font-size: .82rem; color: rgba(240,237,232,.75); line-height: 1.5;
+    }
+    .wmc-briefing-close {
+      position: absolute; top: 12px; right: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #9A9690; cursor: pointer;
+      width: 24px; height: 24px; border-radius: 50%;
+      font-size: .8rem; line-height: 1; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .wmc-briefing-close:hover { color: #F0EDE8; background: rgba(255,255,255,.1); }
+
+    /* ── WMC Festival Pulse upgrade ── */
+    .wmc-pulse-card {
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 12px;
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg,rgba(255,102,0,.12) 0%,rgba(229,0,125,.09) 100%);
+      border: 1px solid rgba(255,102,0,.25);
+    }
+    .wmc-pulse-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(255,102,0,.7); margin-bottom: 8px;
+    }
+    .wmc-pulse-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: 2px; line-height: 1;
+      color: #F0EDE8; margin-bottom: 8px;
+    }
+    .wmc-pulse-body {
+      font-family: 'Barlow', sans-serif;
+      font-size: .84rem; color: #9A9690; line-height: 1.6;
+    }
+
+    /* ── WMC Academie Tab header ── */
+    .wmc-academie-hdr {
+      padding: 20px 18px 16px; margin-bottom: 6px;
+    }
+    .wmc-academie-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .25em; text-transform: uppercase;
+      color: #FF6600; margin-bottom: 8px; display: block;
+    }
+    .wmc-academie-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 7vw, 3rem); letter-spacing: 2px;
+      line-height: .95; color: #F0EDE8; margin-bottom: 8px;
+    }
+    .wmc-academie-title em { color: #FF6600; font-style: normal; }
+    .wmc-academie-sub {
+      font-family: 'Barlow', sans-serif;
+      font-size: .88rem; color: #9A9690; line-height: 1.55;
+    }
+    .wmc-academie-progress-bar {
+      display: flex; gap: 8px; margin-top: 14px; padding: 12px 14px;
+      background: rgba(255,102,0,.06);
+      border: 1px solid rgba(255,102,0,.14);
+      border-radius: 10px; align-items: center;
+    }
+
+    @keyframes wmcFadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .wmc-fade-up { animation: wmcFadeUp .4s ease-out both; }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
     body {
@@ -4816,37 +5290,53 @@ function Workspace({user}){
       {mlItem&&<ContentModal item={mlItem} onClose={()=>setMlItem(null)}/>}
       {/* WMC identiteitsbar — alleen voor WMC-gebruikers */}
       {user.wmc_role&&(
-        <div className="wmc-hdr-bar" style={{padding:'10px 0 8px'}}>
-          {/* WMC officieel logo — belpaviljoenvorm, 4 kleurkurven (cyaan · magenta · geel · zwart) */}
-          <svg className="wmc-logo-svg" width="42" height="42" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg" aria-label="WMC Kerkrade officieel logo">
-            {/* Belpaviljoenvorm: 4 overlappende gekleurde curves → samen het silhouet van een blaasinstrumentbel */}
-            {/* Cyaan curve — links */}
-            <path d="M18 8 C14 22, 8 38, 6 58 C4 72, 10 82, 20 86 C28 89, 36 87, 44 84 C38 80, 30 72, 26 60 C22 46, 20 30, 22 14 Z"
-              fill="#00AEEF" opacity="0.92"/>
-            {/* Magenta curve — midden-links */}
-            <path d="M30 5 C26 20, 20 38, 18 58 C16 72, 22 82, 34 87 C42 90, 52 88, 60 84 C52 78, 44 70, 40 58 C36 44, 34 26, 36 10 Z"
-              fill="#E5007D" opacity="0.92"/>
-            {/* Geel curve — midden-rechts */}
-            <path d="M50 4 C46 20, 40 38, 38 58 C36 72, 44 82, 56 87 C66 90, 76 88, 82 82 C74 76, 64 68, 60 56 C56 42, 56 24, 60 8 Z"
-              fill="#FFE000" opacity="0.92"/>
-            {/* Zwart/donker curve — rechts, geeft diepte */}
-            <path d="M68 6 C64 22, 58 40, 56 60 C54 74, 62 84, 74 87 C82 89, 90 84, 94 76 C90 66, 84 56, 82 44 C80 30, 80 16, 82 6 Z"
-              fill="#1A1A1A" opacity="0.88"/>
-            {/* Rand bovenaan — verbindt de curves */}
-            <ellipse cx="50" cy="8" rx="36" ry="6" fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="0.5"/>
-          </svg>
-          <div className="wmc-hdr-info">
-            <div className="wmc-hdr-event">World Music Contest 2026 · Kerkrade</div>
-            <div className="wmc-hdr-title">{user.name}</div>
+        <div style={{
+          padding:'10px 16px 10px',
+          borderBottom:'1px solid rgba(255,102,0,.14)',
+          background:'rgba(10,10,10,.98)',
+          display:'flex',alignItems:'center',gap:12,
+        }}>
+          {/* WMC heart logo */}
+          <div style={{
+            width:36,height:36,flexShrink:0,
+            background:'linear-gradient(135deg,#FF6600,#E5007D)',
+            clipPath:'path("M18 31s-15-9.4-15-17.5a7.5 7.5 0 0 1 15 0 7.5 7.5 0 0 1 15 0C33 21.6 18 31 18 31z")',
+            filter:'drop-shadow(0 0 8px rgba(255,102,0,.4))',
+          }}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{
+              fontFamily:'JetBrains Mono,monospace',
+              fontSize:'.52rem',letterSpacing:'.18em',textTransform:'uppercase',
+              background:'linear-gradient(135deg,#FF6600,#E5007D)',
+              WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',
+              backgroundClip:'text',marginBottom:2,
+            }}>World Music Contest 2026 · Kerkrade</div>
+            <div style={{
+              fontFamily:'Bebas Neue,sans-serif',
+              fontSize:'1.05rem',letterSpacing:'2px',color:'#F0EDE8',
+              whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',
+            }}>{user.name}</div>
           </div>
-          <div className="wmc-hdr-right">
-            {user.location&&user.location!=='ALL'&&(
-              <div className="wmc-loc-pill">
-                {{'RODAHAL':'🎼','STADION':'🏟️','TEMPEL':'🏛️','ARENA':'🎪'}[user.location]||'📍'} {user.location}
+          <div style={{textAlign:'right',flexShrink:0}}>
+            {user.location&&(
+              <div style={{
+                display:'inline-flex',alignItems:'center',gap:5,
+                padding:'4px 10px',borderRadius:14,
+                background:'rgba(255,102,0,.10)',
+                border:'1px solid rgba(255,102,0,.30)',
+                fontFamily:'JetBrains Mono,monospace',
+                fontSize:'.52rem',letterSpacing:'.12em',color:'#FF6600',
+                whiteSpace:'nowrap',marginBottom:3,
+              }}>
+                {{'RODAHAL':'🎼','STADION':'🏟️','TEMPEL':'🏛️','ARENA':'🎪','ALL':'🗺️'}[user.location]||'📍'}{' '}
+                {user.location==='ALL'?'Alle locaties':user.location}
               </div>
             )}
-            {user.location==='ALL'&&<div className="wmc-loc-pill">🗺️ Alle locaties</div>}
-            <div className="wmc-role-label">
+            <div style={{
+              fontFamily:'JetBrains Mono,monospace',
+              fontSize:'.52rem',color:'#4A4644',letterSpacing:'.04em',
+              textAlign:'right',marginTop:2,
+            }}>
               {user.wmc_role==='sergeant'?'⭐ Sergeant':user.wmc_role==='manager'?'🎯 Manager':'🤝 Vrijwilliger'}
             </div>
           </div>
@@ -5330,14 +5820,27 @@ function Workspace({user}){
       )}
 
       {/* Bottom nav */}
-      <nav className="bnav">
+      <nav className="bnav" style={user.wmc_role?{
+        background:'rgba(10,10,10,.97)',
+        borderTop:'1px solid rgba(255,102,0,.12)',
+      }:{}}>
         {(()=>{
           const kompasOpen=true;
           const wmcNav=[['🏠','home','Home'],['🎓','academie','Academie'],['📈','mijnwmc','Mijn WMC'],['📚','bibliotheek','Bibliotheek'],['ℹ️','info','Info']];
           const koraalNav=[['🏠','home','Home'],['🎓','academie','Academie'],['📊','meten','Meten'],[kompasOpen?'📚':'🔒','bibliotheek',kompasOpen?'Bibliotheek':'Gesloten'],['ℹ️','info','Info']];
           return (user.wmc_role?wmcNav:koraalNav).map(([e,id,l])=>(
-            <button key={id} className={`nav-i${tab===id?' act':''}`} onClick={()=>{haptic('light');setTab(id)}}>
+            <button key={id}
+              className={`nav-i${tab===id?' act':''}`}
+              onClick={()=>{haptic('light');setTab(id)}}
+              style={user.wmc_role&&tab===id?{color:'#FF6600'}:{}}>
               <span className="nav-e">{e}</span>{l}
+              {user.wmc_role&&tab===id&&(
+                <span style={{
+                  display:'block',width:20,height:2,borderRadius:1,
+                  background:'linear-gradient(90deg,#FF6600,#E5007D)',
+                  margin:'2px auto 0',
+                }}/>
+              )}
             </button>
           ));
         })()}
@@ -6184,18 +6687,63 @@ function WmcModuleCard({mod,userId,onOpen}){
   const active=state==='BADGE_ACTIVE';
   const prog=wmcGetProg(userId,mod.id);
   const pct=active?100:prog.l3Done?90:prog.l2Done?70:prog.l1Passed?50:prog.p1Done?20:0;
+  const prereqLabels=locked?mod.prereqs.map(b=>WMC_MODULES.find(m=>m.badge===b)?.badgeLabel||b).join(' + '):'';
   return(
-    <button onClick={()=>{if(!locked){haptic('light');onOpen(mod);}}} style={{width:'100%',background:active?`${mod.color}0e`:'var(--surface)',border:`1px solid ${active?mod.color+'40':'var(--border)'}`,borderRadius:12,padding:'14px',textAlign:'left',cursor:locked?'not-allowed':'pointer',opacity:locked?0.5:1,marginBottom:9,transition:'all .2s'}}>
-      <div style={{display:'flex',alignItems:'center',gap:11,marginBottom:active||pct>0?9:0}}>
-        <div style={{fontSize:'1.5rem',lineHeight:1,filter:locked?'grayscale(1)':active?`drop-shadow(0 0 7px ${mod.color}50)`:undefined}}>{locked?'🔒':mod.icon}</div>
-        <div style={{flex:1}}>
-          <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:active?mod.color:'var(--dim)',letterSpacing:'.06em',marginBottom:2}}>{active?`${mod.badgeLabel} — ACTIEF`:locked?`Vereist: ${mod.prereqs.map(b=>WMC_MODULES.find(m=>m.badge===b)?.badgeLabel||b).join(' + ')}`:`Module ${mod.number} · ${mod.domain}`}</div>
-          <div style={{fontWeight:600,fontSize:'.92rem'}}>{mod.title}</div>
-          <div style={{fontSize:'.76rem',color:'var(--muted)',marginTop:1}}>{mod.sub}</div>
+    <button
+      onClick={()=>{if(!locked){haptic('light');onOpen(mod);}}}
+      style={{
+        width:'100%',textAlign:'left',cursor:locked?'not-allowed':'pointer',
+        marginBottom:9,opacity:locked?0.45:1,
+        background:active?`${mod.color}0d`:'rgba(14,14,20,.95)',
+        border:`1px solid ${active?mod.color+'45':'rgba(255,102,0,.12)'}`,
+        borderRadius:12,padding:'14px 16px',
+        transition:'all .22s',display:'block',
+      }}
+      onMouseEnter={e=>{ if(!locked){ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 8px 24px ${mod.color}20`; e.currentTarget.style.borderColor=active?mod.color+'70':'rgba(255,102,0,.28)'; }}}
+      onMouseLeave={e=>{ e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; e.currentTarget.style.borderColor=active?mod.color+'45':'rgba(255,102,0,.12)'; }}
+    >
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:(active||pct>0)?10:0}}>
+        <div style={{
+          width:42,height:42,borderRadius:10,flexShrink:0,
+          background:locked?'rgba(255,255,255,.04)':active?`${mod.color}22`:`${mod.color}12`,
+          border:`1px solid ${locked?'rgba(255,255,255,.06)':active?`${mod.color}50`:`${mod.color}25`}`,
+          display:'flex',alignItems:'center',justifyContent:'center',
+          fontSize:'1.3rem',
+          filter:locked?'grayscale(1)':active?`drop-shadow(0 0 8px ${mod.color}50)`:undefined,
+          transition:'all .3s',
+        }}>
+          {locked?'🔒':mod.icon}
         </div>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',flexShrink:0}}>{active?'✓':locked?'':pct>0?`${pct}%`:mod.duration+'m'}</div>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{
+            fontFamily:'JetBrains Mono,monospace',fontSize:'.52rem',letterSpacing:'.14em',
+            textTransform:'uppercase',marginBottom:3,
+            color:active?mod.color:locked?'#4A4644':'rgba(255,102,0,.7)',
+          }}>
+            {active?`${mod.badgeLabel} — Actief`:locked?`Vereist: ${prereqLabels}`:`Module ${mod.number} · ${mod.domain}`}
+          </div>
+          <div style={{
+            fontFamily:'Barlow Condensed,sans-serif',fontSize:'1.02rem',fontWeight:700,
+            color:'#F0EDE8',letterSpacing:'.03em',marginBottom:2,
+          }}>{mod.title}</div>
+          <div style={{fontFamily:'Barlow,sans-serif',fontSize:'.78rem',color:'#9A9690'}}>{mod.sub}</div>
+        </div>
+        <div style={{
+          fontFamily:'JetBrains Mono,monospace',fontSize:'.6rem',color:'#4A4644',flexShrink:0,
+          ...(active?{color:mod.color,fontWeight:600}:{}),
+        }}>
+          {active?'✓':locked?'':pct>0?`${pct}%`:mod.duration+'m'}
+        </div>
       </div>
-      {(active||pct>0)&&<div style={{height:2,background:'var(--surface-3)',borderRadius:1,overflow:'hidden'}}><div style={{height:'100%',width:`${pct}%`,background:active?mod.color:'var(--sage)',borderRadius:1}}/></div>}
+      {(active||pct>0)&&(
+        <div style={{height:2,background:'rgba(255,255,255,.06)',borderRadius:1,overflow:'hidden'}}>
+          <div style={{
+            height:'100%',width:`${pct}%`,borderRadius:1,
+            background:active?`linear-gradient(90deg,${mod.color},#E5007D)`:'linear-gradient(90deg,#FF6600,#E5007D)',
+            transition:'width .6s cubic-bezier(.4,0,.2,1)',
+          }}/>
+        </div>
+      )}
     </button>
   );
 }
@@ -6274,45 +6822,58 @@ function WmcCheckinCard({user, onCheckin}) {
   const alreadyDone = todayCheckin?.date === today;
 
   if (alreadyDone) {
-    const col = todayCheckin.status==='GREEN'?'var(--green)':todayCheckin.status==='RED'?'var(--red)':'var(--amber)';
-    const lbl2 = {'GREEN':'Groen — goed','ORANGE':'Oranje — voorzichtig','RED':'Rood — zorg nodig'};
+    const statusMap={
+      GREEN:{col:'#4aaa68',bg:'rgba(74,170,104,.10)',bc:'rgba(74,170,104,.35)',label:'Groen — ik ben er'},
+      ORANGE:{col:'#E8A554',bg:'rgba(232,165,84,.08)',bc:'rgba(232,165,84,.30)',label:'Oranje — voorzichtig'},
+      RED:{col:'#C4604A',bg:'rgba(196,96,74,.08)',bc:'rgba(196,96,74,.30)',label:'Rood — zorg nodig'},
+    };
+    const s=statusMap[todayCheckin.status]||statusMap.GREEN;
     return (
-      <div style={{background:'var(--surface)',border:`1px solid ${col}40`,borderRadius:12,padding:'14px 16px',marginBottom:14}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:6}}>CHECK-IN VANDAAG</div>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:10,height:10,borderRadius:'50%',background:col,flexShrink:0}}/>
-          <div style={{fontSize:'.88rem',fontWeight:500,color:'var(--text)'}}>{lbl2[todayCheckin.status]}</div>
-          <div style={{marginLeft:'auto',fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)'}}>
-            {new Date(todayCheckin.checkedAt).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
-          </div>
+      <div className="wmc-checkin-done wmc-fade-up" style={{background:s.bg,borderColor:s.bc,marginBottom:14}}>
+        <div style={{width:10,height:10,borderRadius:'50%',background:s.col,
+          boxShadow:`0 0 8px ${s.col}60`,flexShrink:0}}/>
+        <div style={{flex:1}}>
+          <div className="wmc-checkin-done-label">Check-in vandaag</div>
+          <div className="wmc-checkin-done-status" style={{color:s.col}}>{s.label}</div>
+        </div>
+        <div style={{fontFamily:'JetBrains Mono, monospace',fontSize:'.58rem',color:'#4A4644',flexShrink:0}}>
+          {new Date(todayCheckin.checkedAt).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
         </div>
       </div>
     );
   }
 
+  const options=[
+    {status:'GREEN', icon:'🟢', label:'GROEN', sub:'Ik ben er',
+      col:'#4aaa68',bg:'rgba(74,170,104,.10)',bc:'rgba(74,170,104,.4)',glow:'rgba(74,170,104,.25)'},
+    {status:'ORANGE',icon:'🟠', label:'ORANJE', sub:'Voorzichtig',
+      col:'#E8A554',bg:'rgba(232,165,84,.08)',bc:'rgba(232,165,84,.35)',glow:'rgba(232,165,84,.2)'},
+    {status:'RED',   icon:'🔴', label:'ROOD',   sub:'Zorg nodig',
+      col:'#C4604A',bg:'rgba(196,96,74,.08)',bc:'rgba(196,96,74,.35)',glow:'rgba(196,96,74,.2)'},
+  ];
+
   return (
-    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'14px 16px',marginBottom:14}}>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.08em',marginBottom:8}}>DAGELIJKSE CHECK-IN</div>
-      <div style={{fontSize:'.85rem',color:'var(--muted)',marginBottom:12,lineHeight:1.5}}>
+    <div className="wmc-checkin-card wmc-fade-up">
+      <div className="wmc-checkin-label">Dagelijkse Check-in</div>
+      <div className="wmc-checkin-sub">
         Hoe zit je erbij vandaag? Geen diagnose — alleen een signaal voor jezelf en je Sergeant.
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>
-        {[
-          {status:'GREEN', icon:'🟢', label:'Groen', sub:'Ik ben er', color:'var(--green)', bg:'rgba(74,170,104,.1)', bc:'rgba(74,170,104,.4)'},
-          {status:'ORANGE',icon:'🟠', label:'Oranje', sub:'Voorzichtig', color:'var(--amber)', bg:'rgba(232,165,84,.08)', bc:'rgba(232,165,84,.35)'},
-          {status:'RED',   icon:'🔴', label:'Rood', sub:'Zorg nodig', color:'var(--red)', bg:'rgba(196,96,74,.08)', bc:'rgba(196,96,74,.35)'},
-        ].map(({status,icon,label,sub,color,bg,bc})=>(
-          <button key={status} onClick={()=>{haptic('medium');onCheckin(status);}}
-            style={{padding:'12px 8px',background:bg,border:`1px solid ${bc}`,borderRadius:10,
-              cursor:'pointer',textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
-            <span style={{fontSize:'1.4rem'}}>{icon}</span>
-            <span style={{fontSize:'.82rem',fontWeight:600,color}}>{label}</span>
-            <span style={{fontSize:'.7rem',color:'var(--dim)'}}>{sub}</span>
+      <div className="wmc-checkin-grid">
+        {options.map(o=>(
+          <button key={o.status}
+            className="wmc-checkin-btn"
+            onClick={()=>{haptic('medium');onCheckin(o.status);}}
+            style={{background:o.bg,borderColor:o.bc}}
+            onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 6px 20px ${o.glow}`;e.currentTarget.style.borderColor=o.col;}}
+            onMouseLeave={e=>{e.currentTarget.style.boxShadow='none';e.currentTarget.style.borderColor=o.bc;}}>
+            <span className="wmc-checkin-btn-icon">{o.icon}</span>
+            <span className="wmc-checkin-btn-label" style={{color:o.col}}>{o.label}</span>
+            <span className="wmc-checkin-btn-sub">{o.sub}</span>
           </button>
         ))}
       </div>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',marginTop:8,textAlign:'center'}}>
-        Dit is een reflectie-voorstel — beslissingen blijven menselijk.
+      <div className="wmc-checkin-footer">
+        Zero Inference · Beslissingen blijven menselijk
       </div>
     </div>
   );
@@ -6368,14 +6929,12 @@ function WmcBadgeStrip({user}) {
     WMC_MODULES.map(m=>({...m,state:wmcGetBadge(user.id,m.badge)}))
   );
 
-  // Laad badge-status vanuit Supabase bij eerste render (graceful fallback)
   useEffect(()=>{
     if(!user.hash) return;
     wmcLoadBadgesFromSupabase(user.hash).then(rows=>{
       if(!rows?.length) return;
       rows.forEach(({badge_id,status})=>{
         const cur = wmcGetBadge(user.id,badge_id);
-        // Supabase wint alleen als status verder is dan lokaal
         const rank = s=>['LOCKED','AVAILABLE','IN_PROGRESS','L1_PASSED','L2_COMPLETE','L3_COMPLETE','BADGE_ACTIVE'].indexOf(s);
         if(rank(status)>rank(cur)) ls.set(`wmc-badge-${user.id}-${badge_id}`,status);
       });
@@ -6386,21 +6945,22 @@ function WmcBadgeStrip({user}) {
   const earned = badges.filter(b=>b.state==='BADGE_ACTIVE').length;
 
   return (
-    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 14px',marginBottom:14}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.08em'}}>BADGES — ACADEMIE</div>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)'}}>{earned}/5 behaald</div>
+    <div className="wmc-badge-strip wmc-fade-up">
+      <div className="wmc-badge-strip-hdr">
+        <div className="wmc-badge-strip-label">Badges — Academie</div>
+        <div className="wmc-badge-strip-count">{earned}/5</div>
       </div>
-      <div style={{display:'flex',gap:8}}>
+      <div className="wmc-badge-row">
         {badges.map(b=>{
           const active = b.state==='BADGE_ACTIVE';
           const inprog = ['IN_PROGRESS','L1_PASSED','L2_COMPLETE','L3_COMPLETE','AVAILABLE'].includes(b.state);
           return (
-            <div key={b.id} style={{flex:1,textAlign:'center'}}>
-              <div style={{fontSize:'1.2rem',filter:active?`drop-shadow(0 0 6px ${b.color}60)`:inprog?undefined:'grayscale(.9)',opacity:active?1:inprog?.7:0.3,transition:'all .3s'}}>
-                {b.icon}
-              </div>
-              <div style={{fontFamily:'var(--font-m)',fontSize:'.5rem',color:active?b.color:inprog?'var(--muted)':'var(--dim)',marginTop:2,transition:'color .3s'}}>
+            <div key={b.id} className="wmc-badge-item">
+              <span className="wmc-badge-icon" style={{
+                filter:active?`drop-shadow(0 0 8px ${b.color}70)`:inprog?`drop-shadow(0 0 4px ${b.color}30)`:'grayscale(.95)',
+                opacity:active?1:inprog?.65:.25,
+              }}>{b.icon}</span>
+              <div className="wmc-badge-num" style={{color:active?b.color:inprog?'#9A9690':'#4A4644'}}>
                 {active?'✓':inprog?'…':b.number}
               </div>
             </div>
@@ -6408,8 +6968,8 @@ function WmcBadgeStrip({user}) {
         })}
       </div>
       {earned>0&&(
-        <div style={{marginTop:10,height:2,background:'var(--surface-3)',borderRadius:1,overflow:'hidden'}}>
-          <div style={{height:'100%',width:`${earned/5*100}%`,background:'linear-gradient(90deg,var(--sage),var(--sage-bright))',borderRadius:1,transition:'width .6s ease'}}/>
+        <div className="wmc-badge-prog">
+          <div className="wmc-badge-prog-fill" style={{width:`${earned/5*100}%`}}/>
         </div>
       )}
     </div>
@@ -6425,22 +6985,52 @@ function WmcCountdown() {
     {label:'Weekend 4',date:'2026-07-30',sub:'Slotweekend & Finale'},
   ];
   const now=new Date();
-  const next=weekends.find(w=>new Date(w.date)>now)||weekends[weekends.length-1];
+  const past=weekends.filter(w=>new Date(w.date)<=now);
+  const upcoming=weekends.filter(w=>new Date(w.date)>now);
+  const next=upcoming[0]||weekends[weekends.length-1];
   const diff=Math.max(0,Math.ceil((new Date(next.date)-now)/(1000*60*60*24)));
   const isLive=diff===0;
+  const doneCount=past.length;
   return (
-    <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 14px',marginBottom:14,display:'flex',alignItems:'center',gap:14}}>
-      <div style={{flex:1}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:3}}>WMC 2026</div>
-        <div style={{fontWeight:600,fontSize:'.9rem'}}>{next.label} — {next.sub}</div>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:'var(--muted)',marginTop:2}}>9 jul – 2 aug 2026 · Kerkrade</div>
-      </div>
-      <div style={{textAlign:'center',flexShrink:0}}>
-        {isLive
-          ?<div style={{fontFamily:'var(--font-m)',fontSize:'.75rem',color:'var(--green)',fontWeight:700}}>🔴 LIVE</div>
-          :<><div style={{fontFamily:'var(--font-d)',fontSize:'2rem',fontWeight:300,color:'var(--gold)',lineHeight:1}}>{diff}</div>
-          <div style={{fontFamily:'var(--font-m)',fontSize:'.58rem',color:'var(--dim)'}}>dagen</div></>
-        }
+    <div className="wmc-countdown wmc-fade-up">
+      {/* Decoratieve gradient orb achtergrond */}
+      <div style={{position:'absolute',top:'-40px',right:'-20px',width:'160px',height:'160px',
+        borderRadius:'50%',background:'radial-gradient(circle,rgba(255,102,0,.12),transparent 70%)',
+        pointerEvents:'none'}}/>
+      <div style={{position:'relative',zIndex:1}}>
+        <div className="wmc-countdown-eyebrow">WMC 2026 · Kerkrade · 9 jul – 2 aug</div>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
+          <div style={{flex:1}}>
+            {isLive ? (
+              <div className="wmc-countdown-live">
+                <div className="wmc-countdown-livdot"/>
+                LIVE · {next.label}
+              </div>
+            ) : (
+              <div className="wmc-countdown-main">
+                <div className="wmc-countdown-num">{diff}</div>
+                <div className="wmc-countdown-unit">dagen</div>
+              </div>
+            )}
+            <div className="wmc-countdown-label">{next.label} — {next.sub}</div>
+            <div className="wmc-countdown-sub">9 jul – 2 aug 2026 · Kerkrade</div>
+          </div>
+          {/* Weekend pips */}
+          <div style={{display:'flex',gap:5,flexShrink:0,paddingTop:6}}>
+            {weekends.map((w,i)=>{
+              const done=new Date(w.date)<=now&&i<doneCount;
+              const active=!isLive&&i===doneCount;
+              return(
+                <div key={i} style={{
+                  width:8,height:8,borderRadius:'50%',flexShrink:0,
+                  background:done?'#FF6600':active?'#E5007D':'rgba(255,255,255,.1)',
+                  boxShadow:active?'0 0 6px rgba(229,0,125,.5)':done?'0 0 4px rgba(255,102,0,.3)':'none',
+                  transition:'all .4s',
+                }}/>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -6521,60 +7111,63 @@ function WmcFestivalPulse({user}) {
   return (
     <div style={{marginBottom:20}}>
       {/* Festival live card */}
-      <div style={{
-        borderRadius:14,padding:'16px 18px',marginBottom:12,
-        background:'linear-gradient(135deg,rgba(255,102,0,.14) 0%,rgba(229,0,125,.10) 100%)',
-        border:'1px solid rgba(255,102,0,.3)',position:'relative',overflow:'hidden',
-      }}>
-        {/* Subtle pulse dot */}
-        <div style={{position:'absolute',top:14,right:16,display:'flex',alignItems:'center',gap:5}}>
+      <div className="wmc-pulse-card wmc-fade-up">
+        {/* Pulse indicator */}
+        <div style={{position:'absolute',top:14,right:16,display:'flex',alignItems:'center',gap:6}}>
           <div style={{
             width:7,height:7,borderRadius:'50%',
             background:isLive?'#4aaa68':'#FF6600',
-            boxShadow:isLive?'0 0 0 2px rgba(74,170,104,.3)':'0 0 0 2px rgba(255,102,0,.3)',
+            boxShadow:isLive?'0 0 0 3px rgba(74,170,104,.25)':'0 0 0 3px rgba(255,102,0,.2)',
+            animation: isLive?'wcPulse 1.8s infinite':undefined,
           }}/>
-          <span style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:isLive?'#4aaa68':'#FF6600',letterSpacing:'.06em'}}>
+          <span style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.55rem',
+            color:isLive?'#4aaa68':'#FF6600',letterSpacing:'.08em',textTransform:'uppercase'}}>
             {isLive?'LIVE':'WMC 2026'}
           </span>
         </div>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:6}}>FESTIVAL PULSE</div>
-        <div style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.2rem',lineHeight:1.3,marginBottom:8,color:'var(--text)',paddingRight:60}}>
+        <div className="wmc-pulse-eyebrow">Festival Pulse</div>
+        <div className="wmc-pulse-title" style={{paddingRight:70}}>
           {isLive
             ? `${slot.icon} ${slot.slot} — ${slot.tijd}`
-            : '75 jaar World Music Contest'
+            : '75 JAAR WORLD MUSIC CONTEST'
           }
         </div>
-        {isLive
-          ? <div style={{fontSize:'.82rem',color:'var(--muted)',lineHeight:1.6}}>{slot.tip}</div>
-          : <div style={{fontSize:'.82rem',color:'var(--muted)',lineHeight:1.5}}>
-              252 ensembles · 31 landen · 350.000 bezoekers · 9 jul – 2 aug 2026
-            </div>
-        }
+        <div className="wmc-pulse-body">
+          {isLive
+            ? slot.tip
+            : '252 ensembles · 31 landen · 350.000 bezoekers · 9 jul – 2 aug 2026'
+          }
+        </div>
         {/* Landen-strip */}
-        <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:10}}>
+        <div style={{display:'flex',gap:5,flexWrap:'wrap',marginTop:12}}>
           {today_ensembles.slice(0,6).map((l,i)=>(
-            <span key={i} style={{fontFamily:'var(--font-m)',fontSize:'.58rem',padding:'2px 7px',
-              background:'rgba(255,102,0,.10)',border:'1px solid rgba(255,102,0,.2)',
-              borderRadius:10,color:'rgba(255,102,0,.9)'}}>
-              {l}
-            </span>
+            <span key={i} style={{
+              fontFamily:'JetBrains Mono,monospace',fontSize:'.52rem',
+              padding:'2px 8px',
+              background:'rgba(255,102,0,.08)',border:'1px solid rgba(255,102,0,.18)',
+              borderRadius:10,color:'rgba(255,102,0,.85)',letterSpacing:'.04em',
+            }}>{l}</span>
           ))}
-          <span style={{fontFamily:'var(--font-m)',fontSize:'.58rem',padding:'2px 7px',
-            color:'var(--dim)'}}>+{WMC_ENSEMBLE_LANDEN.length-6} landen</span>
+          <span style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.52rem',
+            padding:'2px 4px',color:'#4A4644'}}>+{WMC_ENSEMBLE_LANDEN.length-6}</span>
         </div>
       </div>
 
       {/* Quote van de dag */}
       <div style={{
         borderRadius:12,padding:'14px 16px',marginBottom:12,
-        background:'var(--surface)',border:'1px solid var(--border)',
+        background:'rgba(14,14,20,.95)',
         borderLeft:'3px solid #E5007D',
+        border:'1px solid rgba(229,0,125,.18)',
+        borderLeftWidth:3,
       }}>
-        <div style={{fontFamily:'var(--font-d)',fontStyle:'italic',fontWeight:300,
-          fontSize:'1rem',lineHeight:1.75,color:'var(--text)',marginBottom:6}}>
+        <div style={{
+          fontFamily:'Barlow Condensed, sans-serif',fontStyle:'italic',
+          fontWeight:400,fontSize:'1rem',lineHeight:1.75,color:'#F0EDE8',marginBottom:6
+        }}>
           {quote.tekst}
         </div>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#E5007D',letterSpacing:'.04em'}}>
+        <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.55rem',color:'#E5007D',letterSpacing:'.06em'}}>
           — {quote.bron}
         </div>
       </div>
@@ -6692,36 +7285,31 @@ function WmcLocatieBriefing({user}) {
 
   if (!visible) return null;
 
+  const col = briefing.color;
+  const colDim = col + '18';
+  const colBorder = col + '35';
+
   return (
-    <div style={{
-      background:`${briefing.color}0d`,
-      border:`1px solid ${briefing.color}35`,
-      borderRadius:12,padding:'14px 16px',marginBottom:14,
-      position:'relative'
-    }}>
-      <button onClick={()=>{ls.set(seenKey,true);setVisible(false);}}
-        style={{position:'absolute',top:10,right:12,background:'none',border:'none',
-          color:'var(--text-dim)',cursor:'pointer',fontSize:'1rem',lineHeight:1}}>✕</button>
-      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-        <span style={{fontSize:'1.1rem'}}>{briefing.icon}</span>
-        <div>
-          <div style={{fontFamily:'var(--font-mono)',fontSize:'.6rem',
-            color:briefing.color,letterSpacing:'.08em',textTransform:'uppercase'}}>
-            DAGBRIEFING · {briefing.label.toUpperCase()}
-          </div>
-          <div style={{fontFamily:'var(--font-display)',fontStyle:'italic',
-            fontWeight:300,fontSize:'.95rem',color:'var(--text)',lineHeight:1.4}}>
-            "{briefing.regel}"
+    <div className="wmc-briefing wmc-fade-up" style={{border:`1px solid ${colBorder}`,background:colDim}}>
+      <div className="wmc-briefing-inner">
+        <button className="wmc-briefing-close" onClick={()=>{ls.set(seenKey,true);setVisible(false);}}>✕</button>
+        <div className="wmc-briefing-hdr">
+          <span className="wmc-briefing-icon">{briefing.icon}</span>
+          <div style={{flex:1}}>
+            <div className="wmc-briefing-eyebrow" style={{color:col}}>
+              Dagbriefing · {briefing.label.toUpperCase()}
+            </div>
+            <div className="wmc-briefing-regel">"{briefing.regel}"</div>
           </div>
         </div>
-      </div>
-      <div style={{display:'flex',flexDirection:'column',gap:4}}>
-        {briefing.tips.map((tip,i)=>(
-          <div key={i} style={{display:'flex',gap:8,alignItems:'flex-start'}}>
-            <span style={{color:briefing.color,fontSize:'.7rem',marginTop:2,flexShrink:0}}>▸</span>
-            <span style={{fontSize:'.8rem',color:'var(--text-muted)',lineHeight:1.5}}>{tip}</span>
-          </div>
-        ))}
+        <div className="wmc-briefing-tips">
+          {briefing.tips.map((tip,i)=>(
+            <div key={i} className="wmc-briefing-tip">
+              <span className="wmc-briefing-tip-dot" style={{color:col}}>▸</span>
+              <span className="wmc-briefing-tip-text">{tip}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -8086,18 +8674,47 @@ function AcademieTab({user}){
   if(activeModule)return <WmcModulePlayer mod={activeModule} userId={uid} userHash={uHash} onClose={()=>{setActiveModule(null);setTick(t=>t+1);}} onBadgeEarned={onBadge}/>;
   const earned=WMC_MODULES.filter(m=>wmcGetBadge(uid,m.badge)==='BADGE_ACTIVE').length;
   return(
-    <div style={{padding:'16px 16px 100px',maxWidth:540,margin:'0 auto'}}>
-      <div style={{marginBottom:22}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:5}}>WMC 2026 · Digital Sanctuary</div>
-        <h1 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.75rem',lineHeight:1.1,marginBottom:7}}>Academie</h1>
-        <p style={{fontSize:'.84rem',color:'var(--muted)',lineHeight:1.6}}>Vijf modules. Vijf badges. De weg van De Vonk naar De Brug.</p>
+    <div style={{padding:'0 0 100px',maxWidth:540,margin:'0 auto'}}>
+      {/* Cinematic header */}
+      <div className="wmc-academie-hdr">
+        <span className="wmc-academie-eyebrow">WMC 2026 · Digital Sanctuary</span>
+        <div className="wmc-academie-title">
+          De <em>Academie</em>
+        </div>
+        <div className="wmc-academie-sub">Vijf modules. Vijf badges. De weg van De Vonk naar De Brug.</div>
+        {/* Badge progress row */}
+        <div className="wmc-academie-progress-bar">
+          {WMC_MODULES.map(m=>{const a=wmcGetBadge(uid,m.badge)==='BADGE_ACTIVE';return(
+            <div key={m.id} style={{flex:1,textAlign:'center'}}>
+              <div style={{fontSize:'1.1rem',filter:a?`drop-shadow(0 0 6px ${m.color}60)`:undefined,opacity:a?1:.3,transition:'all .4s'}}>{m.icon}</div>
+              <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.5rem',
+                color:a?m.color:'#4A4644',marginTop:2,transition:'color .4s'}}>{a?'✓':m.number}</div>
+            </div>
+          );})}
+          <div style={{paddingLeft:10,borderLeft:'1px solid rgba(255,102,0,.18)',
+            display:'flex',flexDirection:'column',justifyContent:'center'}}>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'1.1rem',
+              background:'linear-gradient(135deg,#FF6600,#E5007D)',
+              WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',
+              backgroundClip:'text',letterSpacing:'1px'}}>{earned}/5</div>
+            <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.48rem',color:'#4A4644',letterSpacing:'.06em'}}>badges</div>
+          </div>
+        </div>
       </div>
-      <div style={{display:'flex',gap:7,marginBottom:18,padding:'11px 13px',background:'var(--surface)',borderRadius:10,border:'1px solid var(--border)'}}>
-        {WMC_MODULES.map(m=>{const a=wmcGetBadge(uid,m.badge)==='BADGE_ACTIVE';return(<div key={m.id} style={{flex:1,textAlign:'center'}}><div style={{fontSize:'1.05rem',filter:a?`drop-shadow(0 0 5px ${m.color}50)`:undefined,opacity:a?1:0.35}}>{m.icon}</div><div style={{fontFamily:'var(--font-m)',fontSize:'.5rem',color:a?m.color:'var(--dim)',marginTop:2}}>{a?'✓':m.number}</div></div>);})}
-        <div style={{display:'flex',flexDirection:'column',justifyContent:'center',paddingLeft:7,borderLeft:'1px solid var(--border)'}}><div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)'}}>{earned}/5</div><div style={{fontFamily:'var(--font-m)',fontSize:'.52rem',color:'var(--dim)'}}>badges</div></div>
+      <div style={{padding:'0 16px'}}>
+        {WMC_MODULES.map(mod=><WmcModuleCard key={mod.id} mod={mod} userId={uid} onOpen={setActiveModule}/>)}
+        <div style={{
+          marginTop:14,padding:'10px 14px',
+          background:'rgba(255,255,255,.02)',
+          border:'1px solid rgba(255,255,255,.06)',
+          borderRadius:8,
+          fontFamily:'JetBrains Mono,monospace',
+          fontSize:'.58rem',color:'#4A4644',lineHeight:1.65,
+          letterSpacing:'.03em',
+        }}>
+          🔒 Reflecties worden alleen op dit apparaat opgeslagen. Nooit zichtbaar voor management. Beslissingen blijven menselijk.
+        </div>
       </div>
-      {WMC_MODULES.map(mod=><WmcModuleCard key={mod.id} mod={mod} userId={uid} onOpen={setActiveModule}/>)}
-      <div style={{marginTop:14,padding:'9px 13px',background:'var(--surface)',borderRadius:8,border:'1px solid var(--border)',fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',lineHeight:1.6}}>🔒 Reflecties worden alleen op dit apparaat opgeslagen. Nooit zichtbaar voor management. Beslissingen blijven menselijk.</div>
     </div>
   );
 }
@@ -8154,106 +8771,201 @@ function WmcOnboarding({user, onComplete}){
     onComplete(finalName);
   };
 
+  // Locatie accent kleur
+  const locColor = {RODAHAL:'#FF6600',STADION:'#E5007D',TEMPEL:'#FF6600',ARENA:'#E5007D',ALL:'#FF6600'}[user.location]||'#FF6600';
+  const locGrad = user.location==='STADION'||user.location==='ARENA'
+    ? 'linear-gradient(135deg,rgba(229,0,125,.18),rgba(255,102,0,.08))'
+    : 'linear-gradient(135deg,rgba(255,102,0,.18),rgba(229,0,125,.08))';
+
   const steps=[
     /* 0 — Welkom */
-    <div key={0} style={{padding:'0 0 80px',textAlign:'center'}}>
-      <div style={{fontSize:'3rem',marginBottom:16}}>🎺</div>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.65rem',letterSpacing:'.14em',color:'var(--sage)',textTransform:'uppercase',marginBottom:8}}>WMC 2026 · World Music Contest</div>
-      <h1 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'2rem',lineHeight:1.2,marginBottom:12}}>Welkom bij het Digital Sanctuary</h1>
-      <p style={{fontSize:'.9rem',color:'var(--muted)',lineHeight:1.7,marginBottom:24,maxWidth:340,margin:'0 auto 24px'}}>
-        Dit systeem begeleidt jou door vier piekweekenden. Het meet wat nooit gemeten werd — zodat jij het vol houdt, en het WMC ook.
+    <div key={0} className="wmc-ob-hero-step wmc-fade-up">
+      {/* WMC heart logo groot */}
+      <div style={{
+        width:72,height:72,margin:'0 auto 24px',
+        background:'linear-gradient(135deg,#FF6600,#E5007D)',
+        clipPath:'path("M36 62s-30-18.8-30-35a15 15 0 0 1 30 0 15 15 0 0 1 30 0C66 43.2 36 62 36 62z")',
+        filter:'drop-shadow(0 0 24px rgba(255,102,0,.5))',
+      }}/>
+      <span className="wmc-ob-eyebrow">WMC 2026 · World Music Contest · Kerkrade</span>
+      <h1 className="wmc-ob-h1">
+        Welkom bij het<br/><em>Digital Sanctuary</em>
+      </h1>
+      <p className="wmc-ob-body" style={{maxWidth:360,margin:'0 auto 28px'}}>
+        Dit systeem begeleidt jou door vier piekweekenden.
+        Het meet wat nooit gemeten werd — zodat jij het vol houdt, en het WMC ook.
       </p>
-      <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap',marginBottom:28}}>
-        <div style={{padding:'8px 14px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:20,fontSize:'.82rem',color:'var(--muted)'}}>
-          {loc.icon} {loc.label}
-        </div>
-        <div style={{padding:'8px 14px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:20,fontSize:'.82rem',color:'var(--muted)'}}>
-          {rol.icon} {rol.label}
-        </div>
+      <div className="wmc-ob-pills" style={{marginBottom:36}}>
+        <div className="wmc-ob-pill">{loc.icon} {loc.label}</div>
+        <div className="wmc-ob-pill">{rol.icon} {rol.label}</div>
+        <div className="wmc-ob-pill">9 jul – 2 aug</div>
       </div>
-      <button onClick={()=>{haptic('light');setStep(1);}} style={{width:'100%',maxWidth:340,padding:'13px',background:'var(--sage-b)',border:'1px solid var(--border-act)',borderRadius:10,color:'var(--sage)',fontWeight:600,cursor:'pointer',margin:'0 auto',display:'block'}}>
+      {/* Stat row */}
+      <div style={{display:'flex',gap:0,marginBottom:36,
+        border:'1px solid rgba(255,102,0,.18)',borderRadius:12,overflow:'hidden'}}>
+        {[['252','Ensembles'],['31','Landen'],['350K','Bezoekers'],['4','Weekenden']].map(([n,l],i)=>(
+          <div key={i} style={{flex:1,padding:'14px 8px',textAlign:'center',
+            borderRight:i<3?'1px solid rgba(255,102,0,.12)':'none'}}>
+            <div style={{fontFamily:'Bebas Neue,sans-serif',fontSize:'1.5rem',letterSpacing:'1px',
+              background:'linear-gradient(135deg,#FF6600,#E5007D)',
+              WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',
+              backgroundClip:'text'}}>{n}</div>
+            <div style={{fontFamily:'JetBrains Mono,monospace',fontSize:'.48rem',
+              color:'#9A9690',letterSpacing:'.08em',textTransform:'uppercase'}}>{l}</div>
+          </div>
+        ))}
+      </div>
+      <button className="wmc-ob-cta" onClick={()=>{haptic('light');setStep(1);}}>
         Begin →
       </button>
     </div>,
 
-    /* 1 — Jouw naam bevestigen */
-    <div key={1} style={{padding:'0 0 80px'}}>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.1em',marginBottom:16}}>STAP 1 VAN 3 — JOUW NAAM</div>
-      <h2 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.6rem',marginBottom:8}}>Hoe wil je aangesproken worden?</h2>
-      <p style={{fontSize:'.85rem',color:'var(--muted)',lineHeight:1.6,marginBottom:20}}>
-        Jouw naam staat in de overdrachtsrapporten en de Sergeant-briefings. Gebruik je voornaam — of de naam waarop collega's je kennen.
+    /* 1 — Jouw naam */
+    <div key={1} className="wmc-fade-up" style={{padding:'0 0 100px'}}>
+      <span className="wmc-ob-eyebrow">Stap 1 van 3 — Jouw Naam</span>
+      <h2 className="wmc-ob-h2">Hoe wil je<br/><em>aangesproken</em> worden?</h2>
+      <p className="wmc-ob-body">
+        Jouw naam staat in de overdrachtsrapporten en de Sergeant-briefings.
+        Gebruik je voornaam — of de naam waarop collega's je kennen.
       </p>
-      <label style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:'var(--dim)',letterSpacing:'.06em',display:'block',marginBottom:8}}>NAAM</label>
+      <label className="wmc-ob-input-label">Jouw naam</label>
       <input
+        className="wmc-ob-input"
         value={name}
         onChange={e=>setName(e.target.value)}
         placeholder={user.name}
-        style={{width:'100%',padding:'12px 14px',background:'var(--surface)',border:`1px solid ${name.trim().length>1?'var(--border-act)':'var(--border)'}`,borderRadius:10,color:'var(--text)',fontSize:'1rem',fontFamily:'var(--font-b)',outline:'none',marginBottom:20,boxSizing:'border-box'}}
+        style={{borderColor:name.trim().length>1?'rgba(255,102,0,.55)':'rgba(255,102,0,.2)'}}
       />
-      <button onClick={()=>{if(name.trim().length>1){haptic('light');setStep(2);}}} disabled={name.trim().length<2} style={{width:'100%',padding:'13px',background:name.trim().length>1?'var(--sage-b)':'var(--surface-2)',border:`1px solid ${name.trim().length>1?'var(--border-act)':'var(--border)'}`,borderRadius:10,color:name.trim().length>1?'var(--sage)':'var(--dim)',fontWeight:600,cursor:name.trim().length>1?'pointer':'not-allowed'}}>
+      {/* Preview */}
+      {name.trim().length>1&&(
+        <div style={{
+          marginBottom:24,padding:'12px 16px',
+          background:'rgba(255,102,0,.06)',border:'1px solid rgba(255,102,0,.2)',
+          borderRadius:10,fontFamily:'JetBrains Mono,monospace',
+          fontSize:'.65rem',color:'#FF6600',letterSpacing:'.08em',
+        }}>
+          ✓ Welkom, {name.trim()}
+        </div>
+      )}
+      <button
+        className={name.trim().length>1?'wmc-ob-cta':'wmc-ob-cta'}
+        disabled={name.trim().length<2}
+        onClick={()=>{if(name.trim().length>1){haptic('light');setStep(2);}}}>
         Verder →
       </button>
     </div>,
 
     /* 2 — Locatiebriefing */
-    <div key={2} style={{padding:'0 0 80px'}}>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.1em',marginBottom:16}}>STAP 2 VAN 3 — JOUW LOCATIE</div>
-      <div style={{fontSize:'2.5rem',marginBottom:12,textAlign:'center'}}>{loc.icon}</div>
-      <h2 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.6rem',marginBottom:8,textAlign:'center'}}>{loc.label}</h2>
-      <p style={{fontSize:'.88rem',color:'var(--muted)',lineHeight:1.7,marginBottom:20,textAlign:'center'}}>{loc.desc}</p>
-      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:20}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',marginBottom:8,letterSpacing:'.06em'}}>JOUW ROL OP DEZE LOCATIE</div>
-        <div style={{fontWeight:600,fontSize:'.92rem',marginBottom:4}}>{rol.icon} {rol.label}</div>
-        <div style={{fontSize:'.84rem',color:'var(--muted)',lineHeight:1.6}}>{rol.desc}</div>
-      </div>
-      <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:20}}>
-        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--gold)',marginBottom:8,letterSpacing:'.06em'}}>S + H ≥ T</div>
-        <div style={{fontSize:'.84rem',color:'var(--muted)',lineHeight:1.6}}>
-          Staat + Herstel moet groter zijn dan de Aankomende Taak. Dit systeem helpt jou en je Sergeant dat monitoren — over vier piekweekenden.
+    <div key={2} className="wmc-fade-up" style={{padding:'0 0 100px'}}>
+      <span className="wmc-ob-eyebrow">Stap 2 van 3 — Jouw Locatie</span>
+      {/* Locatie hero */}
+      <div className="wmc-ob-loc-hero" style={{
+        background:locGrad,
+        border:`1px solid ${locColor}30`,
+      }}>
+        <div className="wmc-ob-loc-hero-bg">
+          <span className="wmc-ob-loc-icon">{loc.icon}</span>
+          <span className="wmc-ob-loc-name" style={{color:locColor}}>{loc.label}</span>
+          <div className="wmc-ob-loc-desc">"{loc.desc}"</div>
         </div>
       </div>
-      <button onClick={()=>{haptic('light');setStep(3);}} style={{width:'100%',padding:'13px',background:'var(--sage-b)',border:'1px solid var(--border-act)',borderRadius:10,color:'var(--sage)',fontWeight:600,cursor:'pointer'}}>
+      {/* Rol card */}
+      <div className="wmc-ob-card" style={{marginBottom:12}}>
+        <span className="wmc-ob-card-label">Jouw rol op deze locatie</span>
+        <div className="wmc-ob-card-title">{rol.icon} {rol.label}</div>
+        <div className="wmc-ob-card-body">{rol.desc}</div>
+      </div>
+      {/* SR-17 card */}
+      <div className="wmc-ob-card" style={{
+        marginBottom:28,
+        background:'rgba(229,0,125,.06)',
+        borderColor:'rgba(229,0,125,.2)',
+      }}>
+        <span className="wmc-ob-card-label" style={{color:'#E5007D'}}>SR-17 Protocol</span>
+        <div className="wmc-ob-card-title" style={{
+          fontFamily:'Bebas Neue,sans-serif',fontSize:'1.4rem',letterSpacing:'2px',
+          background:'linear-gradient(135deg,#FF6600,#E5007D)',
+          WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',
+        }}>S + H ≥ T</div>
+        <div className="wmc-ob-card-body">
+          Staat + Herstel moet groter zijn dan de Aankomende Taak.
+          Dit systeem helpt jou en je Sergeant dat monitoren — over vier piekweekenden.
+        </div>
+      </div>
+      <button className="wmc-ob-cta" onClick={()=>{haptic('light');setStep(3);}}>
         Ik begrijp het →
       </button>
     </div>,
 
-    /* 3 — Bevestiging & toestemming */
-    <div key={3} style={{padding:'0 0 80px'}}>
-      <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--sage)',letterSpacing:'.1em',marginBottom:16}}>STAP 3 VAN 3 — TOESTEMMING</div>
-      <h2 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.6rem',marginBottom:12}}>Voordat je begint</h2>
-      {[
-        ['🔒 Privacy by Design','Je reflecties worden alleen op dit apparaat opgeslagen. Ze zijn nooit zichtbaar voor management. Check-in statussen gaan anoniem naar de Sergeant — alleen als signaal, nooit als oordeel.'],
-        ['🧠 Zero Inference','Het systeem diagnosticeert niets. Het stelt geen vragen over hoe je je voelt. Het geeft alleen terug wat jij bewust invoert. Beslissingen blijven altijd bij jou.'],
-        ['⭐ De Sergeant','Je Sergeant ziet of je Groen, Oranje of Rood bent. Nooit wat je schreef. Nooit waarom. Alleen het signaal — zodat hij je kan ondersteunen als dat nodig is.'],
-      ].map(([t,d],i)=>(
-        <div key={i} style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10,padding:'12px 14px',marginBottom:10}}>
-          <div style={{fontWeight:600,fontSize:'.88rem',marginBottom:4}}>{t}</div>
-          <div style={{fontSize:'.82rem',color:'var(--muted)',lineHeight:1.6}}>{d}</div>
-        </div>
-      ))}
-      <button onClick={()=>setConfirmed(c=>!c)} style={{width:'100%',padding:'12px 14px',background:confirmed?'rgba(110,170,140,.12)':'var(--surface)',border:`1px solid ${confirmed?'var(--border-act)':'var(--border)'}`,borderRadius:10,textAlign:'left',cursor:'pointer',display:'flex',alignItems:'center',gap:12,marginTop:8,marginBottom:16}}>
-        <span style={{fontSize:'1.1rem'}}>{confirmed?'☑':'☐'}</span>
-        <span style={{fontSize:'.85rem',color:'var(--text)',lineHeight:1.5}}>Ik begrijp hoe het systeem werkt en ga akkoord met de privacyregels van het WMC Digital Sanctuary.</span>
+    /* 3 — Toestemming */
+    <div key={3} className="wmc-fade-up" style={{padding:'0 0 100px'}}>
+      <span className="wmc-ob-eyebrow">Stap 3 van 3 — Toestemming</span>
+      <h2 className="wmc-ob-h2">Voordat je<br/><em>begint</em></h2>
+      <div style={{marginBottom:16}}>
+        {[
+          {icon:'🔒',kleur:'#FF6600',titel:'Privacy by Design',tekst:'Je reflecties worden alleen op dit apparaat opgeslagen. Ze zijn nooit zichtbaar voor management. Check-in statussen gaan anoniem naar de Sergeant — alleen als signaal, nooit als oordeel.'},
+          {icon:'🧠',kleur:'#E5007D',titel:'Zero Inference',tekst:'Het systeem diagnosticeert niets. Het stelt geen vragen over hoe je je voelt. Het geeft alleen terug wat jij bewust invoert. Beslissingen blijven altijd bij jou.'},
+          {icon:'⭐',kleur:'#FF6600',titel:'De Sergeant',tekst:'Je Sergeant ziet of je Groen, Oranje of Rood bent. Nooit wat je schreef. Nooit waarom. Alleen het signaal — zodat hij je kan ondersteunen als dat nodig is.'},
+        ].map(({icon,kleur,titel,tekst},i)=>(
+          <div key={i} className="wmc-ob-card" style={{borderColor:`${kleur}25`}}>
+            <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+              <span style={{fontSize:'1.2rem',flexShrink:0}}>{icon}</span>
+              <div>
+                <span className="wmc-ob-card-label" style={{color:kleur}}>{titel}</span>
+                <div className="wmc-ob-card-body">{tekst}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        className={`wmc-ob-consent${confirmed?' on':''}`}
+        onClick={()=>setConfirmed(c=>!c)}>
+        <span style={{
+          fontSize:'1.2rem',flexShrink:0,
+          color:confirmed?'#FF6600':'#4A4644',
+          transition:'color .2s',
+        }}>{confirmed?'☑':'☐'}</span>
+        <span style={{
+          fontFamily:'Barlow,sans-serif',fontSize:'.88rem',
+          color:confirmed?'#F0EDE8':'#9A9690',lineHeight:1.55,transition:'color .2s'
+        }}>
+          Ik begrijp hoe het systeem werkt en ga akkoord met de privacyregels van het WMC Digital Sanctuary.
+        </span>
       </button>
-      <button onClick={finish} disabled={!confirmed} style={{width:'100%',padding:'14px',background:confirmed?'var(--sage)':'var(--surface-2)',border:'none',borderRadius:10,color:confirmed?'#04130b':'var(--dim)',fontWeight:700,fontSize:'.95rem',cursor:confirmed?'pointer':'not-allowed',transition:'all .2s'}}>
-        {confirmed?'Ga naar de Academie →':'Vink het vakje aan om te beginnen'}
+      <button
+        className="wmc-ob-cta"
+        disabled={!confirmed}
+        onClick={finish}
+        style={confirmed?{}:{background:'rgba(255,255,255,.05)',boxShadow:'none'}}>
+        {confirmed ? 'Ga naar de Academie →' : 'Vink het vakje aan om te beginnen'}
       </button>
     </div>,
   ];
 
   return(
-    <div style={{background:'var(--bg)',minHeight:'100vh'}}>
-      <div style={{position:'sticky',top:0,zIndex:50,background:'rgba(11,15,20,.97)',backdropFilter:'blur(16px)',borderBottom:'1px solid var(--border)',padding:'12px 16px'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'var(--dim)',flex:1,letterSpacing:'.08em'}}>WMC 2026 · ONBOARDING</div>
-          <div style={{display:'flex',gap:4}}>
+    <div className="wmc-ob-root">
+      <div className="wmc-ob-ambient"/>
+      {/* Header */}
+      <div className="wmc-ob-hdr">
+        <div className="wmc-ob-hdr-inner" style={{display:'flex',alignItems:'center',gap:10}}>
+          <div className="wmc-ob-logo">
+            <div className="wmc-ob-heart"/>
+            WMC 2026
+          </div>
+          <div className="wmc-ob-steps">
             {[0,1,2,3].map(i=>(
-              <div key={i} style={{width:step===i?20:6,height:4,borderRadius:2,background:step>i?'var(--sage)':step===i?'var(--sage)':'var(--surface-3)',opacity:step>=i?1:0.35,transition:'all .3s'}}/>
+              <div key={i} className="wmc-ob-step-dot" style={{
+                width: step===i ? 24 : 6,
+                background: step>i ? '#FF6600' : step===i ? '#FF6600' : 'rgba(255,255,255,.12)',
+                opacity: step>=i ? 1 : 0.35,
+              }}/>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:'24px 16px 0',maxWidth:480,margin:'0 auto'}}>
+      {/* Content */}
+      <div className="wmc-ob-content" style={{position:'relative',zIndex:1}}>
         {steps[step]}
       </div>
     </div>
