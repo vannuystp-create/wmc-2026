@@ -4878,8 +4878,11 @@ function Workspace({user}){
           {/* ── WMC HOME PANEL (alleen voor WMC-gebruikers) ── */}
           {user.wmc_role&&<WmcHomePanel user={user}/>}
 
-          {/* Today card with zone glow */}
-          <div className={`card pi-card-${currentZone||'friction'} pi-zone-glow s1`} style={{marginBottom:14}}>
+          {/* WMC supplement (vervangt Koraal-content voor WMC-gebruikers) */}
+          {user.wmc_role && <WmcHomeSupplement user={user}/>}
+
+          {/* Today card with zone glow — alleen voor Koraal */}
+          {!user.wmc_role&&<div className={`card pi-card-${currentZone||'friction'} pi-zone-glow s1`} style={{marginBottom:14}}>
             <div className="row sb" style={{marginBottom:12}}>
               <div>
                 <p className="lbl">Vandaag</p>
@@ -4912,9 +4915,9 @@ function Workspace({user}){
                 <button onClick={()=>{haptic('light');setShowMeter(true)}} className="btn bp" style={{width:'auto',padding:'12px 28px'}}>{inCalib?'🎯 Kalibratie-meting':'📊 Dagmeting starten'}</button>
               </div>
             )}
-          </div>
-          {/* SpiegelSessie CTA — actief vanaf 10 maart via SPIEGEL_ENABLED */}
-          <div className="glass" style={{borderRadius:14,padding:'18px 20px',marginBottom:14,display:'flex',justifyContent:'space-between',alignItems:'center',gap:14,opacity:SPIEGEL_ENABLED?1:.7}}>
+          </div>}
+          {/* SpiegelSessie CTA — alleen Koraal */}
+          {!user.wmc_role&&<div className="glass" style={{borderRadius:14,padding:'18px 20px',marginBottom:14,display:'flex',justifyContent:'space-between',alignItems:'center',gap:14,opacity:SPIEGEL_ENABLED?1:.7}}>
             <div>
               <p className="lbl" style={{marginBottom:3}}>SpiegelSessie™</p>
               <p style={{fontSize:'.88rem',color:'var(--t1)',maxWidth:220}}>{SPIEGEL_ENABLED?'Start een AI-gesprek op basis van jouw PI-score van vandaag.':'Beschikbaar vanaf 10 maart — na de kalibratieperiode.'}</p>
@@ -4923,15 +4926,15 @@ function Workspace({user}){
               ?<button onClick={()=>setShowSpiegel(true)} className="btn bp" style={{width:'auto',padding:'8px 14px',fontSize:'.85rem'}}>🪞 Start</button>
               :<span style={{background:'var(--s2)',color:'var(--t2)',padding:'8px 14px',borderRadius:8,fontSize:'.8rem',fontWeight:600,whiteSpace:'nowrap',border:'1px solid var(--b0)'}}>📅 10 mrt</span>
             }
-          </div>
-          {/* Trend chart */}
-          {entries.length>=2&&(
+          </div>}
+          {/* Trend chart — alleen Koraal */}
+          {!user.wmc_role&&entries.length>=2&&(
             <div style={{marginBottom:14}} className="s3">
               <PITrendChart entries={entries}/>
             </div>
           )}
-          {/* Content recommendations — locked until March 10 */}
-          {new Date()>=new Date('2026-03-10')&&(
+          {/* Content recommendations — alleen Koraal */}
+          {!user.wmc_role&&new Date()>=new Date('2026-03-10')&&(
           <div style={{marginBottom:14}} className="s4">
             <div className="row sb" style={{marginBottom:10}}>
               <p className="lbl">
@@ -4944,8 +4947,8 @@ function Workspace({user}){
             </div>
           </div>
           )}
-          {/* Week history */}
-          {last7.length>0&&(
+          {/* Week history — alleen Koraal */}
+          {!user.wmc_role&&last7.length>0&&(
             <div className="card" style={{marginBottom:14}}>
               <div className="row sb" style={{marginBottom:12}}>
                 <p className="h3" style={{marginBottom:0}}>Afgelopen 7 dagen</p>
@@ -4959,10 +4962,11 @@ function Workspace({user}){
               ))}
             </div>
           )}
-          {/* Reflectie Sessies */}
-          <ReflectieKaarten user={user} entries={entries}/>
+          {/* Reflectie Sessies — alleen Koraal */}
+          {!user.wmc_role&&<ReflectieKaarten user={user} entries={entries}/>}
 
-          {/* Timeline */}
+          {/* Timeline — alleen Koraal */}
+          {!user.wmc_role&&(
           <div className="card ci">
             <div className="tl">
               {[['1–9 mrt','Kalibratie',entries.filter(e=>e.isCalib).length+' metingen'],['10–16 mrt','7-daagse pilot',inPilot?'Actief':'Nog niet gestart'],['17–24 mrt','Analyse & rapport','–']].map(([d,l,s],i)=>(
@@ -4973,6 +4977,7 @@ function Workspace({user}){
               ))}
             </div>
           </div>
+          )}
         </div>
       )}
 
@@ -6469,6 +6474,214 @@ const WMC_BRIEFINGS = {
     tips: ['Zelfstandig — Autonoom — Kwaliteit — Vertrouwen — Expertise.','Anticiperende service: geef wat nodig is vóórdat het gevraagd wordt.','De muzikant is altijd de hoofdpersoon.'],
   },
 };
+
+/* ═══════════════════════════════════════════════════
+   WMC HOME SUPPLEMENT — Premium festival home
+   Festival pulse · Aanbevolen artikel · Dag-indeling
+═══════════════════════════════════════════════════ */
+
+const WMC_DAGINDELING = [
+  {slot:'Ochtend',tijd:'08:00–12:00',icon:'🌅',tip:'Repetities & aankomst. Muzikanten calibreren. Wees aanwezig zonder op te dringen.'},
+  {slot:'Middag',  tijd:'12:00–17:00',icon:'☀️',tip:'Piekuren op alle locaties. Hoogste bezoekersaantal. OODA-loop actief.'},
+  {slot:'Avond',   tijd:'17:00–22:00',icon:'🌇',tip:'Concertwedstrijden & Fringe. Publiek wil beleven. Energiek en zichtbaar zijn.'},
+  {slot:'Nacht',   tijd:'22:00–00:00',icon:'🌙',tip:'Overdracht & herstel. Shift-wisseling. Handoverrapport invullen.'},
+];
+
+const WMC_ENSEMBLE_LANDEN = [
+  'Japan','Indonesië','Thailand','Zuid-Korea','Nederland','België','Duitsland',
+  'Italië','Spanje','Portugal','VSA','Canada','Brazilië','Australië','Nieuw-Zeeland',
+  'Noorwegen','Zweden','Finland','Polen','Tsjechië','Kroatië','Griekenland','Turkije',
+  'Egypte','Zuid-Afrika','China','Hong Kong','Taiwan','Singapore','Maleisië',
+  'Peru','Chili','Argentinië',
+];
+
+const WMC_QUOTES = [
+  {tekst:'"Uw vrijwilligers hebben ons niet behandeld als buitenlanders. Ze hebben ons behandeld als muzikanten."',bron:'Thomas Hartley, Yorkshire 1949'},
+  {tekst:'"Er staat een stoel in de gang als u even wilt zitten."',bron:'Anonieme WMC-vrijwilliger, 2013'},
+  {tekst:'"Water. Stoel. Niets. Dat is het."',bron:'WMC Digital Sanctuary'},
+  {tekst:'"In de Tempel is jouw onzichtbaarheid het product."',bron:'Stagemanager WMC 2009'},
+  {tekst:'"De woorden zijn de data, maar de context is de waarheid."',bron:'OODA · Festival-principe'},
+  {tekst:'"Strakke systemen creëren vrije mensen."',bron:'WMC Sanctuary Doctrine'},
+];
+
+function WmcFestivalPulse({user}) {
+  const now = new Date();
+  const hour = now.getHours();
+  const slot = WMC_DAGINDELING.find((s,i)=>{
+    const start = [8,12,17,22][i];
+    const end = [12,17,22,24][i];
+    return hour>=start && hour<end;
+  }) || WMC_DAGINDELING[0];
+  const wmc_start = new Date('2026-07-09');
+  const diff = Math.ceil((wmc_start-now)/(1000*60*60*24));
+  const isLive = diff<=0 && diff>-25;
+  const today_ensembles = WMC_ENSEMBLE_LANDEN.slice(0,7+(now.getDate()%8));
+  const quote = WMC_QUOTES[now.getDate() % WMC_QUOTES.length];
+
+  return (
+    <div style={{marginBottom:20}}>
+      {/* Festival live card */}
+      <div style={{
+        borderRadius:14,padding:'16px 18px',marginBottom:12,
+        background:'linear-gradient(135deg,rgba(255,102,0,.14) 0%,rgba(229,0,125,.10) 100%)',
+        border:'1px solid rgba(255,102,0,.3)',position:'relative',overflow:'hidden',
+      }}>
+        {/* Subtle pulse dot */}
+        <div style={{position:'absolute',top:14,right:16,display:'flex',alignItems:'center',gap:5}}>
+          <div style={{
+            width:7,height:7,borderRadius:'50%',
+            background:isLive?'#4aaa68':'#FF6600',
+            boxShadow:isLive?'0 0 0 2px rgba(74,170,104,.3)':'0 0 0 2px rgba(255,102,0,.3)',
+          }}/>
+          <span style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:isLive?'#4aaa68':'#FF6600',letterSpacing:'.06em'}}>
+            {isLive?'LIVE':'WMC 2026'}
+          </span>
+        </div>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.6rem',color:'var(--dim)',letterSpacing:'.08em',marginBottom:6}}>FESTIVAL PULSE</div>
+        <div style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.2rem',lineHeight:1.3,marginBottom:8,color:'var(--text)',paddingRight:60}}>
+          {isLive
+            ? `${slot.icon} ${slot.slot} — ${slot.tijd}`
+            : '75 jaar World Music Contest'
+          }
+        </div>
+        {isLive
+          ? <div style={{fontSize:'.82rem',color:'var(--muted)',lineHeight:1.6}}>{slot.tip}</div>
+          : <div style={{fontSize:'.82rem',color:'var(--muted)',lineHeight:1.5}}>
+              252 ensembles · 31 landen · 350.000 bezoekers · 9 jul – 2 aug 2026
+            </div>
+        }
+        {/* Landen-strip */}
+        <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:10}}>
+          {today_ensembles.slice(0,6).map((l,i)=>(
+            <span key={i} style={{fontFamily:'var(--font-m)',fontSize:'.58rem',padding:'2px 7px',
+              background:'rgba(255,102,0,.10)',border:'1px solid rgba(255,102,0,.2)',
+              borderRadius:10,color:'rgba(255,102,0,.9)'}}>
+              {l}
+            </span>
+          ))}
+          <span style={{fontFamily:'var(--font-m)',fontSize:'.58rem',padding:'2px 7px',
+            color:'var(--dim)'}}>+{WMC_ENSEMBLE_LANDEN.length-6} landen</span>
+        </div>
+      </div>
+
+      {/* Quote van de dag */}
+      <div style={{
+        borderRadius:12,padding:'14px 16px',marginBottom:12,
+        background:'var(--surface)',border:'1px solid var(--border)',
+        borderLeft:'3px solid #E5007D',
+      }}>
+        <div style={{fontFamily:'var(--font-d)',fontStyle:'italic',fontWeight:300,
+          fontSize:'1rem',lineHeight:1.75,color:'var(--text)',marginBottom:6}}>
+          {quote.tekst}
+        </div>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#E5007D',letterSpacing:'.04em'}}>
+          — {quote.bron}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WmcAanbevolenArtikel({user}) {
+  const uid = user?.id||'demo';
+  const loc = user?.location||'ALL';
+  const role = user?.wmc_role||'volunteer';
+  const [open, setOpen] = useState(null);
+
+  // Kies 2 artikelen op basis van locatie en rol
+  const picks = useMemo(()=>{
+    const pool = ALL_WMC_ARTICLES.filter(a=>{
+      if(a.role&&a.role!==role&&role!=='manager') return false;
+      const notRead = !ls.get(`wmc-lib-read-${uid}-${a.id}`);
+      return notRead;
+    });
+    // Prioriteer locatie-specifiek, dan methode, dan algemeen
+    const locSpecific = pool.filter(a=>a.loc===loc);
+    const methode = pool.filter(a=>a.cat==='Methode');
+    const rest = pool.filter(a=>!a.loc&&a.cat!=='Methode');
+    const combined = [...locSpecific,...methode,...rest];
+    return combined.slice(0,2);
+  },[uid,loc,role]);
+
+  if(!picks.length) return null;
+
+  return (
+    <div style={{marginBottom:14}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+        <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:'#FF6600',letterSpacing:'.08em'}}>AANBEVOLEN VOOR JOU</div>
+        <button onClick={()=>{/* navigate to bibliotheek via sendPrompt equiv */}}
+          style={{background:'none',border:'none',color:'#FF6600',fontSize:'.72rem',cursor:'pointer',fontFamily:'var(--font-m)',fontWeight:600,letterSpacing:'.04em'}}>
+          Alles →
+        </button>
+      </div>
+      {picks.map(a=>(
+        <div key={a.id} onClick={()=>setOpen(a)}
+          style={{display:'flex',gap:12,padding:'10px 12px',background:'var(--surface)',
+            border:'1px solid var(--border)',borderRadius:10,cursor:'pointer',marginBottom:8,
+            transition:'border-color .15s'}}
+          onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,102,0,.35)'}
+          onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+          <div style={{width:48,height:48,borderRadius:8,flexShrink:0,
+            background:`linear-gradient(135deg,${a.catColor}22,${a.catColor}08)`,
+            display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.3rem'}}>
+            {{'eye':'👁','shield':'🛡','star':'⭐','trumpet':'🎺','letter':'📜','globe':'🌍','water':'💧','handshake':'🤝','door':'🚪','vip':'👑','mirror':'🪞','zaagtand':'📊'}[a.thumb]||'📄'}
+          </div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontFamily:'var(--font-m)',fontSize:'.58rem',color:a.catColor,
+              letterSpacing:'.04em',marginBottom:3,textTransform:'uppercase'}}>{a.cat}</div>
+            <div style={{fontWeight:600,fontSize:'.85rem',color:'var(--text)',
+              lineHeight:1.3,marginBottom:2,
+              whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{a.title}</div>
+            <div style={{fontSize:'.72rem',color:'var(--dim)'}}>{a.readMin} min lezen · {a.sub}</div>
+          </div>
+        </div>
+      ))}
+      {open&&(
+        <div style={{position:'fixed',inset:0,background:'rgba(7,9,15,.92)',zIndex:300,display:'flex',alignItems:'flex-end'}}>
+          <div style={{width:'100%',maxHeight:'92vh',background:'var(--surface)',
+            borderRadius:'16px 16px 0 0',overflowY:'auto',WebkitOverflowScrolling:'touch'}}>
+            <div style={{height:140,background:`linear-gradient(135deg,${open.catColor}40,var(--surface-3))`,
+              display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
+              <span style={{fontSize:'3rem',opacity:.6}}>{{'eye':'👁','shield':'🛡','star':'⭐','trumpet':'🎺','letter':'📜','globe':'🌍','water':'💧','handshake':'🤝','door':'🚪','vip':'👑','mirror':'🪞','zaagtand':'📊'}[open.thumb]||'📄'}</span>
+              <button onClick={()=>setOpen(null)}
+                style={{position:'absolute',top:12,right:12,width:30,height:30,borderRadius:'50%',
+                  background:'rgba(7,9,15,.7)',border:'none',color:'#fff',cursor:'pointer',fontSize:'1rem'}}>✕</button>
+            </div>
+            <div style={{padding:'16px 20px 80px'}}>
+              <div style={{fontFamily:'var(--font-m)',fontSize:'.62rem',color:open.catColor,letterSpacing:'.08em',marginBottom:6}}>{open.cat}</div>
+              <h2 style={{fontFamily:'var(--font-d)',fontWeight:300,fontSize:'1.4rem',lineHeight:1.2,marginBottom:4}}>{open.title}</h2>
+              <div style={{fontFamily:'var(--font-m)',fontSize:'.68rem',color:'var(--dim)',marginBottom:16}}>{open.readMin} min · {open.sub}</div>
+              {open.body.split('\n\n').map((p,i)=>{
+                if(p.startsWith('**')&&p.endsWith('**')&&p.split('**').length===3)
+                  return <div key={i} style={{fontFamily:'var(--font-m)',fontSize:'.65rem',color:open.catColor,letterSpacing:'.06em',marginTop:16,marginBottom:5,textTransform:'uppercase'}}>{p.slice(2,-2)}</div>;
+                if(p.startsWith('---')) return <div key={i} style={{borderTop:'1px solid var(--border)',margin:'14px 0'}}/>;
+                const parts=p.split(/\*\*(.*?)\*\*/g);
+                return <p key={i} style={{fontSize:'.88rem',color:'var(--muted)',lineHeight:1.8,marginBottom:10}}>
+                  {parts.map((t,j)=>j%2===1?<strong key={j} style={{color:'var(--text)',fontWeight:600}}>{t}</strong>:<span key={j}>{t}</span>)}
+                </p>;
+              })}
+              <button onClick={()=>{ls.set(`wmc-lib-read-${uid}-${open.id}`,true);setOpen(null);haptic('medium');}}
+                style={{width:'100%',marginTop:14,padding:'12px',background:'var(--sage-b)',
+                  border:'1px solid var(--border-act)',borderRadius:10,color:'var(--sage)',
+                  fontWeight:600,cursor:'pointer',fontSize:'.88rem'}}>
+                ✓ Markeer als gelezen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WmcHomeSupplement({user}) {
+  return (
+    <div style={{marginBottom:4}}>
+      <WmcFestivalPulse user={user}/>
+      <WmcAanbevolenArtikel user={user}/>
+    </div>
+  );
+}
 
 function WmcLocatieBriefing({user}) {
   const loc = user.location || 'ALL';
